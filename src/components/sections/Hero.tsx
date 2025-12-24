@@ -29,23 +29,23 @@ export function Hero() {
       className="relative min-h-screen flex flex-col overflow-hidden pt-14 md:pt-16 bg-background"
     >
       {/* Dark background with rounded top corners - sits on white background */}
-      <div className="absolute inset-x-0 top-14 md:top-16 bottom-0 bg-foreground rounded-t-[2rem] md:rounded-t-[3rem]" />
-      
-      {/* Background smoke/blur effect with parallax */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ y: backgroundY }}
-      >
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40 scale-110"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&q=80')",
-            filter: "blur(60px) brightness(0.3)",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/80 to-foreground" />
-      </motion.div>
+      <div className="absolute inset-x-0 top-14 md:top-16 bottom-0 bg-foreground rounded-t-[2rem] md:rounded-t-[3rem] overflow-hidden">
+        {/* Background smoke/blur effect with parallax - contained within rounded div */}
+        <motion.div
+          className="absolute inset-0"
+          style={{ y: backgroundY }}
+        >
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-40 scale-110"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&q=80')",
+              filter: "blur(60px) brightness(0.3)",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/80 to-foreground" />
+        </motion.div>
+      </div>
 
       {/* Main Content */}
       <div className="container-wide relative z-10 flex-1 flex flex-col pt-24 md:pt-32">
