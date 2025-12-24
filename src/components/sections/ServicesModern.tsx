@@ -1,7 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useInView, useMotionValue, useSpring } from "framer-motion";
-import { Plus, Minus, ArrowUpRight } from "lucide-react";
+import { motion, AnimatePresence, useInView, useSpring } from "framer-motion";
+import { Plus, Minus, ArrowUpRight, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface ServiceImage {
+  thumb: string;
+  full: string;
+  title: string;
+}
 
 interface ServiceItem {
   id: string;
@@ -9,7 +15,7 @@ interface ServiceItem {
   title: string;
   description: string;
   categories: string[];
-  images: string[];
+  images: ServiceImage[];
 }
 
 const servicesData: ServiceItem[] = [
@@ -20,8 +26,16 @@ const servicesData: ServiceItem[] = [
     description: "Modern, responsive, and user-friendly websites designed to engage visitors and drive conversions.",
     categories: ["Packaging design", "Logo design", "Rebranding", "Typography", "Guidelines", "Visual identity"],
     images: [
-      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=200&q=80",
-      "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&q=80",
+      {
+        thumb: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=90",
+        title: "Brand Identity"
+      },
+      {
+        thumb: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=90",
+        title: "Website Design"
+      },
     ],
   },
   {
@@ -31,8 +45,16 @@ const servicesData: ServiceItem[] = [
     description: "Strategic social media campaigns that build brand awareness and drive meaningful engagement with your audience.",
     categories: ["Content strategy", "Campaign management", "Analytics", "Community building"],
     images: [
-      "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&q=80",
-      "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=200&q=80",
+      {
+        thumb: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=90",
+        title: "Social Campaign"
+      },
+      {
+        thumb: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=90",
+        title: "Content Strategy"
+      },
     ],
   },
   {
@@ -42,8 +64,16 @@ const servicesData: ServiceItem[] = [
     description: "Data-driven SEO strategies and compelling content that improves your visibility and attracts qualified leads.",
     categories: ["Keyword research", "On-page SEO", "Content creation", "Link building"],
     images: [
-      "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=200&q=80",
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200&q=80",
+      {
+        thumb: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=90",
+        title: "SEO Analytics"
+      },
+      {
+        thumb: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=90",
+        title: "Data Dashboard"
+      },
     ],
   },
   {
@@ -53,11 +83,121 @@ const servicesData: ServiceItem[] = [
     description: "Distinctive brand identities that resonate with your audience and establish lasting market presence.",
     categories: ["Brand strategy", "Visual identity", "Brand guidelines", "Positioning"],
     images: [
-      "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=200&q=80",
-      "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=200&q=80",
+      {
+        thumb: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&q=90",
+        title: "Brand Guidelines"
+      },
+      {
+        thumb: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=200&q=80",
+        full: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=90",
+        title: "Visual Identity"
+      },
     ],
   },
 ];
+
+// Image Preview Component
+function ImagePreview({ 
+  image, 
+  isHovered, 
+  index 
+}: { 
+  image: ServiceImage; 
+  isHovered: boolean;
+  index: number;
+}) {
+  const [showPreview, setShowPreview] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ 
+        delay: index * 0.1 + 0.15, 
+        duration: 0.5,
+        ease: [0.16, 1, 0.3, 1]
+      }}
+      className="relative group/image"
+      onMouseEnter={() => setShowPreview(true)}
+      onMouseLeave={() => setShowPreview(false)}
+    >
+      {/* Thumbnail */}
+      <motion.div
+        whileHover={{ scale: 1.05, y: -4 }}
+        className="w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden ring-2 ring-transparent hover:ring-primary/30 transition-all duration-300 cursor-pointer"
+      >
+        <img
+          src={image.thumb}
+          alt={image.title}
+          className="w-full h-full object-cover"
+        />
+      </motion.div>
+
+      {/* Preview Popup */}
+      <AnimatePresence>
+        {showPreview && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute bottom-full left-0 mb-3 z-50 pointer-events-none"
+          >
+            <div className="relative">
+              {/* Preview Card */}
+              <div className="w-64 lg:w-80 rounded-2xl overflow-hidden bg-[#252525] shadow-2xl border border-white/10">
+                {/* Image */}
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={image.full}
+                    alt={image.title}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  
+                  {/* View icon */}
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, duration: 0.2 }}
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-primary flex items-center justify-center"
+                  >
+                    <ExternalLink className="w-4 h-4 text-primary-foreground" />
+                  </motion.div>
+                </div>
+                
+                {/* Title */}
+                <div className="p-4">
+                  <motion.h4 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="font-syne font-semibold text-white text-sm"
+                  >
+                    {image.title}
+                  </motion.h4>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.15 }}
+                    className="text-white/50 text-xs mt-1"
+                  >
+                    Click to view project
+                  </motion.p>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="absolute -bottom-2 left-6 w-4 h-4 bg-[#252525] border-r border-b border-white/10 rotate-45" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
 
 // Stagger animation variants
 const containerVariants = {
@@ -332,24 +472,12 @@ export function ServicesModern() {
                               {/* Images with stagger */}
                               <div className="flex gap-3">
                                 {service.images.map((img, imgIndex) => (
-                                  <motion.div
+                                  <ImagePreview
                                     key={imgIndex}
-                                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    transition={{ 
-                                      delay: imgIndex * 0.1 + 0.15, 
-                                      duration: 0.5,
-                                      ease: [0.16, 1, 0.3, 1]
-                                    }}
-                                    whileHover={{ scale: 1.05, y: -4 }}
-                                    className="w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden ring-2 ring-transparent hover:ring-primary/30 transition-all duration-300"
-                                  >
-                                    <img
-                                      src={img}
-                                      alt=""
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </motion.div>
+                                    image={img}
+                                    isHovered={hoveredId === service.id}
+                                    index={imgIndex}
+                                  />
                                 ))}
                               </div>
 
