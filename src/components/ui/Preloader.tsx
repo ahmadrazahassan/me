@@ -25,7 +25,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
     const timer = setTimeout(() => {
       setIsLoading(false);
       onComplete?.();
-    }, 1000);
+    }, 2000);
 
     return () => {
       clearInterval(interval);
