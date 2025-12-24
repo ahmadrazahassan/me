@@ -1,11 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Mail, Lightbulb, Target, ArrowUpRight } from "lucide-react";
-import { processSteps } from "@/data/process";
 import { useRef } from "react";
-
-import processDiscovery from "@/assets/process-discovery.jpg";
-import processSpeed from "@/assets/process-speed.jpg";
-import processCollab from "@/assets/process-collab.jpg";
+import { processSteps } from "@/data/process";
 
 export function Process() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -14,192 +9,167 @@ export function Process() {
     offset: ["start end", "end start"]
   });
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const lineWidth = useTransform(scrollYProgress, [0.1, 0.5], ["0%", "100%"]);
 
   return (
-    <section ref={sectionRef} id="process" className="py-24 md:py-32 bg-background overflow-hidden">
-      <div className="container mx-auto px-6 md:px-8">
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5">
-          
-          {/* Large Left Card - Discovery */}
-          <motion.div
+    <section 
+      ref={sectionRef} 
+      id="process" 
+      className="py-32 md:py-44 bg-background"
+    >
+      <div className="container mx-auto px-6 md:px-8 lg:px-12">
+        
+        {/* Header */}
+        <div className="max-w-3xl mb-20 md:mb-28">
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="md:col-span-5 md:row-span-2 bg-muted/30 border border-border/40 rounded-2xl p-8 flex flex-col min-h-[520px] overflow-hidden"
+            className="text-sm font-medium tracking-[0.2em] uppercase text-muted-foreground mb-6"
           >
-            <motion.h2 
-              style={{ y: y2 }}
-              className="text-3xl md:text-4xl lg:text-[2.75rem] font-medium tracking-tight text-foreground leading-[1.1]"
-            >
-              Cutting-Edge{" "}
-              <span className="text-muted-foreground">Creativity</span>
-            </motion.h2>
-            
-            <motion.div 
-              style={{ y: y1 }}
-              className="flex-1 flex items-center justify-center mt-8"
-            >
-              <div className="w-full h-[380px] rounded-xl overflow-hidden">
-                <img 
-                  src={processDiscovery} 
-                  alt="Creative professional" 
-                  className="w-full h-full object-cover object-top"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Top Middle Card - Email Support */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            How we work
+          </motion.p>
+          
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="md:col-span-4 bg-muted/30 border border-border/40 rounded-2xl p-6 flex flex-col"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-foreground leading-[1.1]"
           >
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-medium text-foreground">
-                24/7 Email Support
-              </h3>
-              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
-                <Mail className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Need assistance? Our team is always available to ensure a smooth and hassle-free experience. 24 hours response time.
-            </p>
-          </motion.div>
-
-          {/* Top Right Card - Seamless Collaboration */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="md:col-span-3 md:row-span-2 bg-muted/30 border border-border/40 rounded-2xl p-6 flex flex-col overflow-hidden"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-medium text-foreground">
-                Seamless Collaboration
-              </h3>
-              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
-                <Lightbulb className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              We work closely with you, keeping communication transparent and revisions efficient to bring your vision to life.
-            </p>
-            
-            <motion.div 
-              style={{ y: y3 }}
-              className="flex-1 flex items-end justify-center"
-            >
-              <div className="w-36 h-64 bg-foreground rounded-[2rem] border-[6px] border-foreground/90 overflow-hidden shadow-2xl">
-                <img 
-                  src={processCollab} 
-                  alt="Collaboration" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Middle Center Card - Fast Turnarounds */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="md:col-span-4 rounded-2xl overflow-hidden relative min-h-[220px]"
-          >
-            <motion.img 
-              style={{ scale: useTransform(scrollYProgress, [0, 1], [1.1, 1]) }}
-              src={processSpeed} 
-              alt="Fast turnarounds" 
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-xl md:text-2xl font-medium text-background">
-                Fast & Efficient Turnarounds
-              </h3>
-            </div>
-          </motion.div>
-
-          {/* Bottom Middle Card - Proven Expertise */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="md:col-span-4 bg-muted/30 border border-border/40 rounded-2xl p-6"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-medium text-foreground">
-                Proven Expertise
-              </h3>
-              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
-                <Target className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-              We've helped multiple brands and businesses create stunning, high-impact designs that drive results.
-            </p>
-            
-            {/* Social Proof */}
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-background flex items-center justify-center"
-                  >
-                    <span className="text-xs font-medium text-foreground/60">{i}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-0.5">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <svg key={i} className="w-3 h-3 text-primary fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-xs text-muted-foreground">200+ Satisfied Clients</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Bottom Right Card - Future Ready */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="md:col-span-3 bg-muted/30 border border-border/40 rounded-2xl p-6"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-medium text-foreground">
-                Future-Ready Solutions
-              </h3>
-              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
-                <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Our designs grow with your brand, ensuring long-term success and adaptability.
-            </p>
-          </motion.div>
-
+            A process built for{" "}
+            <span className="text-muted-foreground">results</span>
+          </motion.h2>
         </div>
+
+        {/* Progress Line */}
+        <div className="hidden md:block relative h-px bg-border/50 mb-16">
+          <motion.div 
+            style={{ width: lineWidth }}
+            className="absolute top-0 left-0 h-full bg-foreground"
+          />
+        </div>
+
+        {/* Process Steps Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-12">
+          {processSteps.map((step, index) => (
+            <ProcessCard 
+              key={step.id} 
+              step={step} 
+              index={index}
+            />
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-24 md:mt-32 pt-16 border-t border-border/50"
+        >
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div className="max-w-xl">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+                Ready to start your project? Let's create something extraordinary together.
+              </p>
+            </div>
+            <motion.a
+              href="#contact"
+              className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-full font-medium text-sm tracking-wide hover:bg-foreground/90 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Start a Project
+              <svg 
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </motion.a>
+          </div>
+        </motion.div>
+
       </div>
     </section>
+  );
+}
+
+interface ProcessCardProps {
+  step: {
+    id: string;
+    number: string;
+    title: string;
+    description: string;
+  };
+  index: number;
+}
+
+function ProcessCard({ step, index }: ProcessCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ 
+        duration: 0.7, 
+        delay: index * 0.1,
+        ease: [0.25, 0.1, 0.25, 1]
+      }}
+      className="group relative"
+    >
+      {/* Step Number */}
+      <div className="mb-8">
+        <motion.span 
+          className="inline-block text-7xl md:text-8xl lg:text-9xl font-light text-foreground/[0.08] leading-none tracking-tighter"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
+          {step.number}
+        </motion.span>
+      </div>
+
+      {/* Content */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <motion.div 
+            className="w-2 h-2 rounded-full bg-foreground"
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 + 0.3, duration: 0.3 }}
+          />
+          <span className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
+            Step {step.number}
+          </span>
+        </div>
+
+        <h3 className="text-xl md:text-2xl font-medium text-foreground tracking-tight leading-tight">
+          {step.title}
+        </h3>
+        
+        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+          {step.description}
+        </p>
+      </div>
+
+      {/* Hover Line */}
+      <motion.div 
+        className="absolute -bottom-6 left-0 h-px bg-foreground origin-left"
+        initial={{ scaleX: 0 }}
+        whileHover={{ scaleX: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        style={{ width: "100%" }}
+      />
+    </motion.div>
   );
 }
 
