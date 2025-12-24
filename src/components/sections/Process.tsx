@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const processSteps = [
   {
@@ -19,215 +20,297 @@ const processSteps = [
 ];
 
 export function Process() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax transforms for cards
+  const card1Y = useTransform(scrollYProgress, [0, 1], [100, -50]);
+  const card2Y = useTransform(scrollYProgress, [0, 1], [150, -80]);
+  const card3Y = useTransform(scrollYProgress, [0, 1], [100, -50]);
+  
+  const card1Rotate = useTransform(scrollYProgress, [0, 0.5, 1], [-12, -8, -4]);
+  const card3Rotate = useTransform(scrollYProgress, [0, 0.5, 1], [12, 8, 4]);
+  
+  // Scale transforms
+  const card1Scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
+  const card2Scale = useTransform(scrollYProgress, [0, 0.5], [0.85, 1.02]);
+  const card3Scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
+
+  // Background parallax
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
   return (
-    <section id="process" className="py-24 md:py-32 bg-muted/50 overflow-hidden">
-      <div className="container mx-auto px-6 md:px-8">
+    <section 
+      ref={sectionRef}
+      id="process" 
+      className="py-32 md:py-40 bg-muted/50 overflow-hidden relative"
+    >
+      {/* Animated background elements */}
+      <motion.div 
+        style={{ y: bgY }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+      </motion.div>
+
+      <div className="container mx-auto px-6 md:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16 md:mb-24">
+        <div className="text-center mb-20 md:mb-28">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex items-center justify-center gap-4 mb-6"
           >
-            <span className="w-12 h-px bg-muted-foreground/30" />
-            <span className="text-muted-foreground italic text-sm md:text-base">
+            <motion.span 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="w-16 h-px bg-muted-foreground/40 origin-right"
+            />
+            <span className="text-muted-foreground italic text-sm md:text-base tracking-wide">
               Our Process, Explained
             </span>
-            <span className="w-12 h-px bg-muted-foreground/30" />
+            <motion.span 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="w-16 h-px bg-muted-foreground/40 origin-left"
+            />
           </motion.div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight"
-          >
-            Here's how it works
-          </motion.h2>
+          <div className="overflow-hidden">
+            <motion.h2
+              initial={{ y: 100 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight"
+            >
+              Here's how it works
+            </motion.h2>
+          </div>
         </div>
 
-        {/* Cards Container */}
-        <div className="relative flex items-center justify-center min-h-[500px] md:min-h-[550px]">
+        {/* Cards Container - More spacing */}
+        <div className="relative flex items-center justify-center min-h-[550px] md:min-h-[600px]">
           
-          {/* Connecting Arrow from Card 1 to Card 2 - positioned between cards */}
-          <svg
-            className="absolute z-30 pointer-events-none hidden md:block"
-            style={{ 
-              left: "calc(50% - 180px)", 
-              top: "80px",
-              width: "160px",
-              height: "200px"
-            }}
-            viewBox="0 0 160 200"
-            fill="none"
-          >
-            <motion.path
-              d="M10 180 C 30 120, 80 80, 150 20"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              strokeLinecap="round"
-              fill="none"
-              initial={{ pathLength: 0 }}
-              whileInView={{ pathLength: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.8 }}
-            />
-            {/* Start circle */}
-            <motion.circle
-              cx="10"
-              cy="180"
-              r="5"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              fill="none"
-              initial={{ opacity: 0, scale: 0 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
-            />
-            {/* End circle */}
-            <motion.circle
-              cx="150"
-              cy="20"
-              r="5"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              fill="none"
-              initial={{ opacity: 0, scale: 0 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 1.8 }}
-            />
-          </svg>
-
           {/* Card 1 - Left */}
           <motion.div
-            initial={{ opacity: 0, y: 60, rotate: -6 }}
-            whileInView={{ opacity: 1, y: 0, rotate: -6 }}
+            style={{ 
+              y: card1Y, 
+              rotate: card1Rotate,
+              scale: card1Scale,
+            }}
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute left-[5%] md:left-[12%] lg:left-[18%] z-10"
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute left-[2%] md:left-[8%] lg:left-[14%] z-10"
           >
-            <div className="w-64 md:w-72 lg:w-80 h-[380px] md:h-[420px] bg-background rounded-2xl shadow-xl shadow-foreground/5 p-8 flex flex-col">
-              {/* Large Number */}
-              <span className="font-light text-7xl md:text-8xl text-foreground leading-none tracking-tighter">
+            <motion.div 
+              whileHover={{ scale: 1.03, rotate: -4 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="w-60 md:w-72 lg:w-80 h-[360px] md:h-[400px] bg-background rounded-3xl shadow-xl shadow-foreground/5 p-8 flex flex-col border border-border/50 group cursor-pointer"
+            >
+              {/* Large Number with gradient */}
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4, type: "spring" }}
+                className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500"
+              >
                 1
-              </span>
+              </motion.span>
+
+              {/* Decorative line */}
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="w-12 h-0.5 bg-primary/30 my-6 origin-left group-hover:w-20 transition-all duration-500"
+              />
 
               {/* Content at bottom */}
               <div className="mt-auto">
-                <h3 className="text-xl font-bold text-foreground mb-2">
+                <motion.h3 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300"
+                >
                   {processSteps[0].title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                </motion.h3>
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                  className="text-sm text-muted-foreground leading-relaxed"
+                >
                   {processSteps[0].description}
-                </p>
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
-          {/* Card 2 - Center */}
+          {/* Card 2 - Center (elevated) */}
           <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: -30 }}
+            style={{ 
+              y: card2Y,
+              scale: card2Scale,
+            }}
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-20"
           >
-            <div className="w-64 md:w-72 lg:w-80 h-[380px] md:h-[420px] bg-background rounded-2xl shadow-2xl shadow-foreground/10 p-8 flex flex-col">
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -10 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="w-64 md:w-76 lg:w-84 h-[380px] md:h-[430px] bg-background rounded-3xl shadow-2xl shadow-foreground/15 p-8 flex flex-col border border-primary/20 group cursor-pointer relative overflow-hidden"
+            >
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
               {/* Large Number */}
-              <span className="font-light text-7xl md:text-8xl text-foreground leading-none tracking-tighter">
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.6, type: "spring" }}
+                className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500 relative z-10"
+              >
                 2
-              </span>
+              </motion.span>
+
+              {/* Decorative line */}
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="w-12 h-0.5 bg-primary my-6 origin-left group-hover:w-20 transition-all duration-500 relative z-10"
+              />
 
               {/* Content at bottom */}
-              <div className="mt-auto">
-                <h3 className="text-xl font-bold text-foreground mb-2">
+              <div className="mt-auto relative z-10">
+                <motion.h3 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                  className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300"
+                >
                   {processSteps[1].title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                </motion.h3>
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
+                  className="text-sm text-muted-foreground leading-relaxed"
+                >
                   {processSteps[1].description}
-                </p>
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Card 3 - Right */}
           <motion.div
-            initial={{ opacity: 0, y: 60, rotate: 6 }}
-            whileInView={{ opacity: 1, y: 0, rotate: 6 }}
+            style={{ 
+              y: card3Y, 
+              rotate: card3Rotate,
+              scale: card3Scale,
+            }}
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute right-[5%] md:right-[12%] lg:right-[18%] z-10"
+            transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute right-[2%] md:right-[8%] lg:right-[14%] z-10"
           >
-            <div className="w-64 md:w-72 lg:w-80 h-[380px] md:h-[420px] bg-background rounded-2xl shadow-xl shadow-foreground/5 p-8 flex flex-col relative">
+            <motion.div 
+              whileHover={{ scale: 1.03, rotate: 4 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="w-60 md:w-72 lg:w-80 h-[360px] md:h-[400px] bg-background rounded-3xl shadow-xl shadow-foreground/5 p-8 flex flex-col border border-border/50 group cursor-pointer"
+            >
               {/* Large Number */}
-              <span className="font-light text-7xl md:text-8xl text-foreground leading-none tracking-tighter">
-                3
-              </span>
-
-              {/* Loop Arrow SVG - inside card 3 */}
-              <svg
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-20 md:w-32 md:h-24"
-                viewBox="0 0 120 80"
-                fill="none"
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.8, type: "spring" }}
+                className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500"
               >
-                {/* Start circle */}
-                <motion.circle
-                  cx="15"
-                  cy="40"
-                  r="5"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="2"
-                  fill="none"
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 1 }}
-                />
-                {/* Loop path */}
-                <motion.path
-                  d="M20 40 C 30 40, 40 20, 60 20 C 85 20, 90 50, 70 55 C 55 58, 50 45, 60 40"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: 1.2 }}
-                />
-                {/* End circle */}
-                <motion.circle
-                  cx="105"
-                  cy="45"
-                  r="5"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="2"
-                  fill="none"
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 2.4 }}
-                />
-              </svg>
+                3
+              </motion.span>
+
+              {/* Decorative line */}
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 1 }}
+                className="w-12 h-0.5 bg-primary/30 my-6 origin-left group-hover:w-20 transition-all duration-500"
+              />
 
               {/* Content at bottom */}
               <div className="mt-auto">
-                <h3 className="text-xl font-bold text-foreground mb-2">
+                <motion.h3 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.9 }}
+                  className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300"
+                >
                   {processSteps[2].title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                </motion.h3>
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 1 }}
+                  className="text-sm text-muted-foreground leading-relaxed"
+                >
                   {processSteps[2].description}
-                </p>
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
         </div>
+
+        {/* Bottom decoration with scroll animation */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="flex justify-center mt-16 md:mt-24 gap-3"
+        >
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 1 + i * 0.1 }}
+              className={`w-2 h-2 rounded-full ${i === 1 ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+            />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
