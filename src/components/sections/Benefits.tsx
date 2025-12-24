@@ -146,20 +146,6 @@ export function Benefits() {
 
   return (
     <section ref={sectionRef} className="relative bg-background overflow-hidden">
-      {/* Parallax Background Elements */}
-      <motion.div 
-        className="absolute inset-0 pointer-events-none"
-        style={{ y: bgY }}
-      >
-        <motion.div
-          className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full border border-border/20"
-          style={{ y: decorY, rotate: decorRotate }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] rounded-full border border-border/10"
-          style={{ y: useTransform(scrollYProgress, [0, 1], [-100, 100]) }}
-        />
-      </motion.div>
 
       {/* Main Content */}
       <div className="relative py-32 md:py-44 lg:py-56">
@@ -258,24 +244,6 @@ export function Benefits() {
                 </motion.div>
               </FloatingElement>
 
-              {/* Decorative circles with parallax */}
-              <FloatingElement speed={-0.3} className="absolute -bottom-12 -left-12">
-                <motion.div
-                  className="w-40 h-40 rounded-full border border-border"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={isImageInView ? { scale: 1, opacity: 1 } : {}}
-                  transition={{ duration: 1, delay: 0.9 }}
-                />
-              </FloatingElement>
-              
-              <FloatingElement speed={0.8} className="absolute -top-8 -right-16">
-                <motion.div
-                  className="w-24 h-24 rounded-full border border-primary/20"
-                  initial={{ scale: 0 }}
-                  animate={isImageInView ? { scale: 1 } : {}}
-                  transition={{ duration: 0.8, delay: 1.1 }}
-                />
-              </FloatingElement>
             </div>
 
             {/* Right - Content with staggered parallax */}
