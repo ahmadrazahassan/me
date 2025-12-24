@@ -23,7 +23,7 @@ export function Header() {
             href="#"
             className="font-syne font-bold text-base text-foreground"
           >
-            Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
+            Ahmed<sup className="text-[10px] text-primary">®</sup>
           </a>
 
           {/* Desktop Navigation - Centered */}
@@ -74,7 +74,7 @@ export function Header() {
             >
               <div className="flex items-center justify-between mb-12">
                 <span className="font-syne font-bold text-base text-background">
-                  Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
+                  Ahmed<sup className="text-[10px] text-primary">®</sup>
                 </span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
