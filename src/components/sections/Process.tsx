@@ -394,56 +394,65 @@ export function Process() {
 
         </div>
 
-        {/* Bottom section with animated text */}
+        {/* Modern CTA Button */}
         <motion.div 
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center mt-20 md:mt-32"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex justify-center mt-20 md:mt-28"
         >
-          {/* Animated badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.9 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+          <motion.a
+            href="#contact"
+            className="group relative inline-flex items-center gap-4 px-8 py-4 bg-foreground text-background rounded-full font-medium text-base md:text-lg overflow-hidden cursor-pointer"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >
+            {/* Background hover effect */}
             <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-2 h-2 bg-primary rounded-full"
+              className="absolute inset-0 bg-primary"
+              initial={{ x: "-100%" }}
+              whileHover={{ x: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             />
-            <span className="text-sm text-primary font-medium">Ready to get started?</span>
-          </motion.div>
-
-          {/* Bottom heading */}
-          <div className="overflow-hidden">
-            <motion.h3
-              initial={{ y: 60 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-2xl md:text-3xl font-bold text-foreground mb-4"
-            >
-              It's that simple.
-            </motion.h3>
-          </div>
-
-          {/* Dots decoration */}
-          <div className="flex justify-center gap-3 mt-8">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 1.2 + i * 0.1 }}
-                className={`w-2 h-2 rounded-full ${i === 1 ? 'bg-primary' : 'bg-muted-foreground/30'}`}
-              />
-            ))}
-          </div>
+            
+            {/* Text */}
+            <span className="relative z-10">Start a project with me</span>
+            
+            {/* Animated Arrow */}
+            <span className="relative z-10 flex items-center justify-center w-6 h-6 overflow-hidden">
+              <motion.span
+                className="absolute flex items-center"
+                initial={{ x: 0 }}
+                whileHover={{ x: 30 }}
+                transition={{ duration: 0.3 }}
+              >
+                <svg 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className="group-hover:translate-x-1 transition-transform duration-300"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </motion.span>
+            </span>
+            
+            {/* Magnetic glow on hover */}
+            <motion.div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+              style={{
+                background: "radial-gradient(circle at center, hsl(var(--primary) / 0.3) 0%, transparent 70%)",
+              }}
+            />
+          </motion.a>
         </motion.div>
       </div>
     </section>
