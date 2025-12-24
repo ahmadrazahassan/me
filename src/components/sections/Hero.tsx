@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Plus } from "lucide-react";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 const services = [
   "Branding and Identity",
@@ -19,7 +20,6 @@ export function Hero() {
   // Parallax transforms
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const studioY = useTransform(scrollYProgress, [0, 1], ["0%", "80%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
@@ -66,17 +66,6 @@ export function Hero() {
                 Ahmed
               </span>
             </h1>
-
-            {/* Studio text - positioned to the left under "Ahmed" */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              style={{ y: studioY }}
-              className="font-syne font-bold text-background text-4xl md:text-6xl lg:text-7xl mt-6 md:mt-8 ml-12 md:ml-24 lg:ml-32"
-            >
-              Studio
-            </motion.p>
           </motion.div>
 
           {/* Services list - fixed positioning */}
@@ -146,15 +135,21 @@ export function Hero() {
                   Lauren Thompson
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <a
+                  <MagneticButton
+                    as="a"
                     href="#contact"
-                    className="bg-foreground text-background text-xs px-3 py-1.5 rounded-full hover:bg-foreground/90 transition-colors"
+                    className="bg-foreground text-background text-xs px-3 py-1.5 rounded-full hover:bg-foreground/90 transition-colors inline-block"
+                    strength={0.4}
                   >
                     Let's talk
-                  </a>
-                  <button className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors">
+                  </MagneticButton>
+                  <MagneticButton
+                    as="button"
+                    className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                    strength={0.4}
+                  >
                     <Plus className="h-3 w-3 text-foreground" />
-                  </button>
+                  </MagneticButton>
                 </div>
               </div>
             </div>
