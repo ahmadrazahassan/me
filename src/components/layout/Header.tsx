@@ -22,13 +22,7 @@ export function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "bg-background/95 backdrop-blur-xl border-b border-border"
-            : "bg-transparent pointer-events-none opacity-0"
-        )}
-        style={{ pointerEvents: isScrolled ? "auto" : "none" }}
+        className="fixed top-0 left-0 right-0 z-50 bg-transparent"
       >
         <nav
           className="container-wide flex items-center justify-between h-16 md:h-20"
@@ -37,7 +31,7 @@ export function Header() {
           {/* Logo */}
           <a
             href="#"
-            className="font-syne font-bold text-xl text-foreground"
+            className="font-syne font-bold text-xl text-background"
           >
             Ahmed Inc.
           </a>
@@ -48,11 +42,11 @@ export function Header() {
               <a
                 key={item.id}
                 href={item.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative"
+                className="text-sm text-background/60 hover:text-background transition-colors relative"
               >
                 {item.label}
                 {index === 1 && (
-                  <sup className="text-[10px] text-muted-foreground ml-0.5">27</sup>
+                  <sup className="text-[10px] text-background/40 ml-0.5">27</sup>
                 )}
               </a>
             ))}
@@ -60,14 +54,14 @@ export function Header() {
 
           {/* Hamburger Menu */}
           <button
-            className="p-2 text-foreground"
+            className="p-2 text-background"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
             <div className="w-7 flex flex-col gap-1.5">
-              <span className="block h-0.5 bg-foreground w-full"></span>
-              <span className="block h-0.5 bg-foreground w-full"></span>
-              <span className="block h-0.5 bg-foreground w-3/4 ml-auto"></span>
+              <span className="block h-0.5 bg-background w-full"></span>
+              <span className="block h-0.5 bg-background w-full"></span>
+              <span className="block h-0.5 bg-background w-3/4 ml-auto"></span>
             </div>
           </button>
         </nav>
