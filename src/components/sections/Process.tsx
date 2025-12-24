@@ -16,6 +16,22 @@ export function Process() {
     offset: ["start end", "end start"],
   });
 
+  // Parallax transforms
+  const bgTextY = useTransform(scrollYProgress, [0, 1], [200, -300]);
+  const bgTextX = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const bgTextRotate = useTransform(scrollYProgress, [0, 1], [0, -5]);
+  const bgTextOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 0.08, 0.08, 0]);
+  
+  const floatingCircle1Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const floatingCircle2Y = useTransform(scrollYProgress, [0, 1], [100, -150]);
+  const floatingCircle3Y = useTransform(scrollYProgress, [0, 1], [-50, -250]);
+  
+  const numbersY = useTransform(scrollYProgress, [0, 1], [100, -400]);
+  const numbersOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 0.03, 0.03, 0]);
+  
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 0.3, 0.3, 0]);
+
   const lineHeight = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "100%"]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -162,12 +178,111 @@ export function Process() {
         </motion.div>
       </div>
 
-      {/* Decorative Elements */}
+      {/* Decorative Parallax Elements */}
+      
+      {/* Large Background Text */}
       <motion.div
-        className="absolute top-20 right-20 text-[15vw] font-bold text-border/5 font-syne select-none pointer-events-none"
-        style={{ y: useTransform(scrollYProgress, [0, 1], [0, -100]) }}
+        className="absolute top-1/4 -right-20 text-[20vw] font-bold font-syne select-none pointer-events-none whitespace-nowrap"
+        style={{ 
+          y: bgTextY, 
+          x: bgTextX,
+          rotate: bgTextRotate,
+          opacity: bgTextOpacity,
+          color: "hsl(var(--border))"
+        }}
       >
         PROCESS
+      </motion.div>
+
+      {/* Secondary Background Text */}
+      <motion.div
+        className="absolute bottom-1/4 -left-40 text-[15vw] font-bold font-syne select-none pointer-events-none whitespace-nowrap"
+        style={{ 
+          y: useTransform(scrollYProgress, [0, 1], [-100, 200]),
+          opacity: bgTextOpacity,
+          color: "hsl(var(--border))"
+        }}
+      >
+        CREATE
+      </motion.div>
+
+      {/* Floating Circles */}
+      <motion.div
+        className="absolute top-[10%] right-[15%] w-64 h-64 rounded-full border border-primary/10 pointer-events-none"
+        style={{ y: floatingCircle1Y }}
+      />
+      <motion.div
+        className="absolute top-[40%] left-[5%] w-32 h-32 rounded-full border border-border/20 pointer-events-none"
+        style={{ y: floatingCircle2Y }}
+      />
+      <motion.div
+        className="absolute bottom-[20%] right-[10%] w-48 h-48 rounded-full bg-primary/5 pointer-events-none"
+        style={{ y: floatingCircle3Y }}
+      />
+
+      {/* Large Numbers */}
+      <motion.div
+        className="absolute top-[15%] left-[10%] font-mono text-[30vw] font-bold select-none pointer-events-none"
+        style={{ 
+          y: numbersY, 
+          opacity: numbersOpacity,
+          color: "hsl(var(--primary))"
+        }}
+      >
+        01
+      </motion.div>
+      <motion.div
+        className="absolute bottom-[10%] right-[5%] font-mono text-[25vw] font-bold select-none pointer-events-none"
+        style={{ 
+          y: useTransform(scrollYProgress, [0, 1], [50, -300]), 
+          opacity: numbersOpacity,
+          color: "hsl(var(--primary))"
+        }}
+      >
+        04
+      </motion.div>
+
+      {/* Grid Pattern */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ y: gridY, opacity: gridOpacity }}
+      >
+        <div 
+          className="w-full h-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, hsl(var(--border) / 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, hsl(var(--border) / 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '80px 80px'
+          }}
+        />
+      </motion.div>
+
+      {/* Diagonal Lines */}
+      <motion.div
+        className="absolute top-0 right-0 w-[1px] h-[50vh] bg-primary/20 origin-top pointer-events-none"
+        style={{ 
+          rotate: 45,
+          y: useTransform(scrollYProgress, [0, 1], [-100, 100])
+        }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-[20%] w-[1px] h-[40vh] bg-border/30 origin-bottom pointer-events-none"
+        style={{ 
+          rotate: -30,
+          y: useTransform(scrollYProgress, [0, 1], [50, -150])
+        }}
+      />
+
+      {/* Dot Pattern */}
+      <motion.div
+        className="absolute top-[30%] right-[20%] grid grid-cols-5 gap-4 pointer-events-none"
+        style={{ y: useTransform(scrollYProgress, [0, 1], [0, -80]) }}
+      >
+        {[...Array(25)].map((_, i) => (
+          <div key={i} className="w-1 h-1 rounded-full bg-primary/20" />
+        ))}
       </motion.div>
     </section>
   );
