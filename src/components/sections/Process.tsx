@@ -19,6 +19,34 @@ const processSteps = [
   },
 ];
 
+// Text reveal animation variants
+const letterVariants = {
+  hidden: { y: 100, opacity: 0 },
+  visible: (i: number) => ({
+    y: 0,
+    opacity: 1,
+    transition: {
+      delay: i * 0.03,
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+};
+
+const wordVariants = {
+  hidden: { y: 50, opacity: 0, rotateX: 45 },
+  visible: (i: number) => ({
+    y: 0,
+    opacity: 1,
+    rotateX: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+};
+
 export function Process() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -42,11 +70,18 @@ export function Process() {
   // Background parallax
   const bgY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
+  // Dotted line progress
+  const lineProgress1 = useTransform(scrollYProgress, [0.1, 0.4], [0, 1]);
+  const lineProgress2 = useTransform(scrollYProgress, [0.2, 0.5], [0, 1]);
+
+  const headingWords = "Here's how it works".split(" ");
+  const subHeadingText = "Simple, Fast & Effective";
+
   return (
     <section 
       ref={sectionRef}
       id="process" 
-      className="py-32 md:py-40 bg-muted/50 overflow-hidden relative"
+      className="py-32 md:py-44 bg-muted/50 overflow-hidden relative"
     >
       {/* Animated background elements */}
       <motion.div 
@@ -58,49 +93,197 @@ export function Process() {
       </motion.div>
 
       <div className="container mx-auto px-6 md:px-8 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-20 md:mb-28">
+        {/* Enhanced Header */}
+        <div className="text-center mb-20 md:mb-32">
+          {/* Top tag with line animation */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center justify-center gap-4 mb-6"
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-center gap-4 mb-8"
           >
             <motion.span 
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-16 h-px bg-muted-foreground/40 origin-right"
+              transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="w-20 h-px bg-gradient-to-r from-transparent to-muted-foreground/50 origin-right"
             />
-            <span className="text-muted-foreground italic text-sm md:text-base tracking-wide">
-              Our Process, Explained
-            </span>
+            <motion.span 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-muted-foreground italic text-sm md:text-base tracking-widest uppercase"
+            >
+              Our Process
+            </motion.span>
             <motion.span 
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-16 h-px bg-muted-foreground/40 origin-left"
+              transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="w-20 h-px bg-gradient-to-l from-transparent to-muted-foreground/50 origin-left"
             />
           </motion.div>
 
-          <div className="overflow-hidden">
+          {/* Main heading with word-by-word reveal */}
+          <div className="overflow-hidden mb-6">
             <motion.h2
-              initial={{ y: 100 }}
-              whileInView={{ y: 0 }}
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight"
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-tight flex flex-wrap justify-center gap-x-4"
             >
-              Here's how it works
+              {headingWords.map((word, i) => (
+                <motion.span
+                  key={i}
+                  custom={i}
+                  variants={wordVariants}
+                  className="inline-block"
+                  style={{ perspective: "1000px" }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.h2>
           </div>
+
+          {/* Sub-heading with character reveal */}
+          <div className="overflow-hidden mb-8">
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-xl md:text-2xl text-primary font-medium flex justify-center"
+            >
+              {subHeadingText.split("").map((char, i) => (
+                <motion.span
+                  key={i}
+                  custom={i}
+                  variants={letterVariants}
+                  className="inline-block"
+                >
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </motion.p>
+          </div>
+
+          {/* Description with fade-up */}
+          <motion.p
+            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed"
+          >
+            We've streamlined our design process to deliver exceptional results with speed and precision.
+          </motion.p>
+
+          {/* Animated decorative element */}
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="flex justify-center mt-10"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="w-12 h-12 rounded-full border border-dashed border-primary/30 flex items-center justify-center"
+            >
+              <div className="w-2 h-2 bg-primary rounded-full" />
+            </motion.div>
+          </motion.div>
         </div>
 
-        {/* Cards Container - More spacing */}
+        {/* Cards Container */}
         <div className="relative flex items-center justify-center min-h-[550px] md:min-h-[600px]">
+          
+          {/* Dotted connecting line 1 (Card 1 to Card 2) */}
+          <svg
+            className="absolute z-15 pointer-events-none hidden md:block"
+            style={{ 
+              left: "calc(50% - 220px)", 
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: "200px",
+              height: "100px"
+            }}
+            viewBox="0 0 200 100"
+            fill="none"
+          >
+            <motion.path
+              d="M0 80 Q 50 80, 100 50 T 200 20"
+              stroke="hsl(var(--primary))"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray="6 8"
+              fill="none"
+              style={{
+                pathLength: lineProgress1,
+                opacity: lineProgress1,
+              }}
+            />
+            <motion.circle
+              cx="0"
+              cy="80"
+              r="4"
+              fill="hsl(var(--primary))"
+              style={{ opacity: lineProgress1 }}
+            />
+            <motion.circle
+              cx="200"
+              cy="20"
+              r="4"
+              fill="hsl(var(--primary))"
+              style={{ opacity: lineProgress1 }}
+            />
+          </svg>
+
+          {/* Dotted connecting line 2 (Card 2 to Card 3) */}
+          <svg
+            className="absolute z-15 pointer-events-none hidden md:block"
+            style={{ 
+              left: "calc(50% + 20px)", 
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: "200px",
+              height: "100px"
+            }}
+            viewBox="0 0 200 100"
+            fill="none"
+          >
+            <motion.path
+              d="M0 20 Q 50 20, 100 50 T 200 80"
+              stroke="hsl(var(--primary))"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray="6 8"
+              fill="none"
+              style={{
+                pathLength: lineProgress2,
+                opacity: lineProgress2,
+              }}
+            />
+            <motion.circle
+              cx="0"
+              cy="20"
+              r="4"
+              fill="hsl(var(--primary))"
+              style={{ opacity: lineProgress2 }}
+            />
+            <motion.circle
+              cx="200"
+              cy="80"
+              r="4"
+              fill="hsl(var(--primary))"
+              style={{ opacity: lineProgress2 }}
+            />
+          </svg>
           
           {/* Card 1 - Left */}
           <motion.div
@@ -292,24 +475,56 @@ export function Process() {
 
         </div>
 
-        {/* Bottom decoration with scroll animation */}
+        {/* Bottom section with animated text */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="flex justify-center mt-16 md:mt-24 gap-3"
+          className="text-center mt-20 md:mt-32"
         >
-          {[0, 1, 2].map((i) => (
+          {/* Animated badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+          >
             <motion.div
-              key={i}
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 1 + i * 0.1 }}
-              className={`w-2 h-2 rounded-full ${i === 1 ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-2 h-2 bg-primary rounded-full"
             />
-          ))}
+            <span className="text-sm text-primary font-medium">Ready to get started?</span>
+          </motion.div>
+
+          {/* Bottom heading */}
+          <div className="overflow-hidden">
+            <motion.h3
+              initial={{ y: 60 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-2xl md:text-3xl font-bold text-foreground mb-4"
+            >
+              It's that simple.
+            </motion.h3>
+          </div>
+
+          {/* Dots decoration */}
+          <div className="flex justify-center gap-3 mt-8">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 1.2 + i * 0.1 }}
+                className={`w-2 h-2 rounded-full ${i === 1 ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+              />
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>
