@@ -295,7 +295,7 @@ export function Process() {
             initial={{ opacity: 0, x: -100 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="absolute left-[2%] md:left-[8%] lg:left-[14%] z-10"
           >
             <motion.div 
@@ -303,46 +303,19 @@ export function Process() {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="w-60 md:w-72 lg:w-80 h-[360px] md:h-[400px] bg-background rounded-3xl shadow-xl shadow-foreground/5 p-8 flex flex-col border border-border/50 group cursor-pointer"
             >
-              {/* Large Number with gradient */}
-              <motion.span 
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4, type: "spring" }}
-                className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500"
-              >
+              {/* Large Number */}
+              <span className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500">
                 1
-              </motion.span>
-
-              {/* Decorative line */}
-              <motion.div 
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="w-12 h-0.5 bg-primary/30 my-6 origin-left group-hover:w-20 transition-all duration-500"
-              />
+              </span>
 
               {/* Content at bottom */}
               <div className="mt-auto">
-                <motion.h3 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300"
-                >
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                   {processSteps[0].title}
-                </motion.h3>
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  className="text-sm text-muted-foreground leading-relaxed"
-                >
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {processSteps[0].description}
-                </motion.p>
+                </p>
               </div>
             </motion.div>
           </motion.div>
@@ -356,7 +329,7 @@ export function Process() {
             initial={{ opacity: 0, y: 100 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-20"
           >
             <motion.div 
@@ -368,45 +341,18 @@ export function Process() {
               <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               {/* Large Number */}
-              <motion.span 
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.6, type: "spring" }}
-                className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500 relative z-10"
-              >
+              <span className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500 relative z-10">
                 2
-              </motion.span>
-
-              {/* Decorative line */}
-              <motion.div 
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className="w-12 h-0.5 bg-primary my-6 origin-left group-hover:w-20 transition-all duration-500 relative z-10"
-              />
+              </span>
 
               {/* Content at bottom */}
               <div className="mt-auto relative z-10">
-                <motion.h3 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                  className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300"
-                >
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                   {processSteps[1].title}
-                </motion.h3>
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.8 }}
-                  className="text-sm text-muted-foreground leading-relaxed"
-                >
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {processSteps[1].description}
-                </motion.p>
+                </p>
               </div>
             </motion.div>
           </motion.div>
@@ -421,7 +367,7 @@ export function Process() {
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="absolute right-[2%] md:right-[8%] lg:right-[14%] z-10"
           >
             <motion.div 
@@ -430,45 +376,18 @@ export function Process() {
               className="w-60 md:w-72 lg:w-80 h-[360px] md:h-[400px] bg-background rounded-3xl shadow-xl shadow-foreground/5 p-8 flex flex-col border border-border/50 group cursor-pointer"
             >
               {/* Large Number */}
-              <motion.span 
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.8, type: "spring" }}
-                className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500"
-              >
+              <span className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500">
                 3
-              </motion.span>
-
-              {/* Decorative line */}
-              <motion.div 
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 1 }}
-                className="w-12 h-0.5 bg-primary/30 my-6 origin-left group-hover:w-20 transition-all duration-500"
-              />
+              </span>
 
               {/* Content at bottom */}
               <div className="mt-auto">
-                <motion.h3 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.9 }}
-                  className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300"
-                >
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                   {processSteps[2].title}
-                </motion.h3>
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 1 }}
-                  className="text-sm text-muted-foreground leading-relaxed"
-                >
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {processSteps[2].description}
-                </motion.p>
+                </p>
               </div>
             </motion.div>
           </motion.div>
