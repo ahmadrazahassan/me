@@ -1,11 +1,19 @@
 import React, { useRef } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { motion, useInView } from "framer-motion";
-import { navigationItems } from "@/data/navigation";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 
 export function Footer() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const brandRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  
+  const { scrollYProgress } = useScroll({
+    target: brandRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const imageY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const imageRotate = useTransform(scrollYProgress, [0, 1], [-5, 5]);
 
   const footerLinks = [
     { number: "01", label: "Home", href: "#home" },
@@ -66,7 +74,7 @@ export function Footer() {
             </motion.a>
           </div>
 
-          {/* Right - Navigation Links */}
+          {/* Right - Navigation Links with Underline Effects */}
           <div className="lg:pl-12">
             <nav className="space-y-0">
               {footerLinks.map((link, index) => (
@@ -76,25 +84,44 @@ export function Footer() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.1 * index }}
-                  className="flex items-center justify-between py-4 border-b border-border/40 group hover:border-foreground/40 transition-colors"
+                  className="flex items-center justify-between py-4 border-b border-border/40 group relative overflow-hidden"
                 >
+                  {/* Animated underline */}
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-[1px] bg-foreground"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ transformOrigin: "left" }}
+                  />
+                  
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground font-mono">
+                    <motion.span 
+                      className="text-xs text-muted-foreground font-mono transition-colors duration-300 group-hover:text-primary"
+                    >
                       {link.number} /
-                    </span>
-                    <span className="text-base font-medium group-hover:translate-x-1 transition-transform">
-                      {link.label}
+                    </motion.span>
+                    <span className="text-base font-medium relative">
+                      <span className="relative z-10 transition-transform duration-300 inline-block group-hover:translate-x-2">
+                        {link.label}
+                      </span>
                     </span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+                  
+                  <motion.div
+                    className="transition-all duration-300"
+                    whileHover={{ x: 4 }}
+                  >
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
+                  </motion.div>
                 </motion.a>
               ))}
             </nav>
           </div>
         </div>
 
-        {/* Large Brand Name */}
-        <div className="relative mb-12 overflow-hidden">
+        {/* Large Brand Name with Parallax Image */}
+        <div ref={brandRef} className="relative mb-12 overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -105,13 +132,33 @@ export function Footer() {
               AHMED
             </h2>
             
-            {/* Decorative Image Placeholder */}
+            {/* Floating Parallax Image */}
             <motion.div
+              style={{ y: imageY, rotate: imageRotate }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="hidden md:block w-48 lg:w-64 h-48 lg:h-64 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-4 flex-shrink-0"
-            />
+              className="hidden md:block absolute right-0 bottom-8 lg:bottom-12 w-48 lg:w-64 h-48 lg:h-64 rounded-2xl overflow-hidden shadow-2xl"
+            >
+              <div className="w-full h-full bg-gradient-to-br from-primary/30 via-primary/10 to-background relative">
+                {/* Decorative elements */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-primary/20 blur-xl" />
+                </div>
+                <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-primary animate-pulse" />
+                <div className="absolute bottom-8 left-8 w-16 h-1 bg-foreground/20 rounded-full" />
+                <div className="absolute bottom-12 left-8 w-10 h-1 bg-foreground/10 rounded-full" />
+                
+                {/* Grid pattern overlay */}
+                <div className="absolute inset-0 opacity-10"
+                  style={{
+                    backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), 
+                                      linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+                    backgroundSize: '20px 20px'
+                  }}
+                />
+              </div>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -129,19 +176,21 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <a
               href="#"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
             >
-              Privacy Policy
+              <span>Privacy Policy</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-foreground transition-all duration-300 group-hover:w-full" />
             </a>
             <a
               href="#"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
             >
-              Terms of Service
+              <span>Terms of Service</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-foreground transition-all duration-300 group-hover:w-full" />
             </a>
             <a
               href="#"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 text-sm hover:bg-foreground hover:text-background transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 text-sm hover:bg-foreground hover:text-background transition-all duration-300"
             >
               <ArrowUpRight className="w-3 h-3" />
               Design Expert
