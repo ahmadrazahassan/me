@@ -410,7 +410,7 @@ export function Process() {
           >
             {/* Text with underline animation */}
             <span className="relative text-xl md:text-2xl lg:text-3xl font-medium text-foreground tracking-tight">
-              Start a project with me
+              Start a Project
               <motion.span 
                 className="absolute left-0 -bottom-1 h-px bg-foreground origin-left"
                 initial={{ scaleX: 0 }}
@@ -421,19 +421,19 @@ export function Process() {
               <span className="absolute left-0 -bottom-1 w-full h-px bg-primary scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
             </span>
             
-            {/* Animated Arrow Circle */}
+            {/* Animated Arrow Circle - pointing upper right */}
             <motion.span 
               className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-foreground/20 group-hover:border-primary transition-colors duration-300"
-              whileHover={{ scale: 1.1, rotate: -45 }}
+              whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              {/* Arrow */}
+              {/* Arrow pointing upper right */}
               <svg 
-                width="20" 
-                height="20" 
+                width="18" 
+                height="18" 
                 viewBox="0 0 24 24" 
                 fill="none" 
-                className="text-foreground group-hover:text-primary transition-colors duration-300 -rotate-45"
+                className="text-foreground group-hover:text-primary transition-colors duration-300"
               >
                 <motion.path 
                   d="M7 17L17 7" 
