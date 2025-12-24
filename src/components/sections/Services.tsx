@@ -5,15 +5,41 @@ import { services } from "@/data/services";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { PillButton } from "@/components/ui/PillButton";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export function Services() {
   const [activeService, setActiveService] = useState(services[0]);
 
   return (
     <section id="services" className="section-padding bg-foreground text-background">
-      <div className="container-wide">
+      <motion.div
+        className="container-wide"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+      >
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Service Tabs */}
-          <div className="space-y-3">
+          <motion.div className="space-y-3" variants={itemVariants}>
             {services.map((service) => (
               <motion.button
                 key={service.id}
@@ -36,10 +62,10 @@ export function Services() {
                 See pricing
               </PillButton>
             </div>
-          </div>
+          </motion.div>
 
           {/* Service Details */}
-          <div className="space-y-6">
+          <motion.div className="space-y-6" variants={itemVariants}>
             <div className="flex items-center gap-2 text-sm text-background/60">
               <span className="inline-block w-2 h-2 rounded-full bg-primary" />
               <span className="uppercase tracking-wider">What we offer</span>
@@ -80,10 +106,10 @@ export function Services() {
                 </div>
               </motion.div>
             </AnimatePresence>
-          </div>
+          </motion.div>
 
           {/* Service Image */}
-          <div className="relative">
+          <motion.div className="relative" variants={itemVariants}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeService.id}
@@ -100,9 +126,9 @@ export function Services() {
                 />
               </motion.div>
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

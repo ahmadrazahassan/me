@@ -4,12 +4,51 @@ import { benefits } from "@/data/benefits";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { PillButton } from "@/components/ui/PillButton";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const headerVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export function Benefits() {
   return (
     <section className="section-padding bg-background">
-      <div className="container-wide">
+      <motion.div
+        className="container-wide"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+      >
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+        <motion.div
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16"
+          variants={headerVariants}
+        >
           <SectionHeader
             eyebrow="Why choose us"
             title="Why Choose"
@@ -21,17 +60,14 @@ export function Benefits() {
               Let's talk
             </PillButton>
           </div>
-        </div>
+        </motion.div>
 
         {/* Benefits Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits.map((benefit, index) => (
+          {benefits.map((benefit) => (
             <motion.div
               key={benefit.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={cardVariants}
               whileHover={{ y: -8, transition: { duration: 0.2 } }}
               className={`group relative rounded-3xl overflow-hidden bg-card border border-border shadow-sm hover:shadow-xl transition-shadow ${
                 benefit.size === "large" ? "md:row-span-2" : ""
@@ -57,7 +93,7 @@ export function Benefits() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

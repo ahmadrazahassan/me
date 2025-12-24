@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Clock, Send } from "lucide-react";
-import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Check } from "lucide-react";
 import { PillButton } from "@/components/ui/PillButton";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,6 +17,45 @@ const features = [
   "Flexible payment plans available",
   "Free initial consultation",
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const leftVariants = {
+  hidden: { opacity: 0, x: -40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
+const formVariants = {
+  hidden: { opacity: 0, x: 40, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
+const featureVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
 
 export function ContactCTA() {
   const { toast } = useToast();
@@ -39,10 +77,16 @@ export function ContactCTA() {
 
   return (
     <section id="contact" className="section-padding bg-foreground text-background">
-      <div className="container-wide">
+      <motion.div
+        className="container-wide"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+      >
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Left Column - Info */}
-          <div className="space-y-8">
+          <motion.div className="space-y-8" variants={leftVariants}>
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm text-background/60">
                 <span className="inline-block w-2 h-2 rounded-full bg-primary" />
@@ -62,10 +106,7 @@ export function ContactCTA() {
               {features.map((feature, index) => (
                 <motion.li
                   key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
+                  variants={featureVariants}
                   className="flex items-center gap-3 text-background/80"
                 >
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20">
@@ -75,14 +116,11 @@ export function ContactCTA() {
                 </motion.li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Right Column - Form */}
           <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            variants={formVariants}
             onSubmit={handleSubmit}
             className="bg-background/5 rounded-3xl p-6 md:p-8 space-y-6"
           >
@@ -171,7 +209,7 @@ export function ContactCTA() {
             </PillButton>
           </motion.form>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
