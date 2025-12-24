@@ -1,468 +1,167 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-
-const processSteps = [
-  {
-    number: "1",
-    title: "Subscribe",
-    description: "Choose a plan and request as many designs as you need.",
-  },
-  {
-    number: "2",
-    title: "Request",
-    description: "Choose a plan and request as many designs as you need.",
-  },
-  {
-    number: "3",
-    title: "Get Your Designs",
-    description: "Choose a plan and request as many designs as you need.",
-  },
-];
-
-// Text reveal animation variants
-const letterVariants = {
-  hidden: { y: 100, opacity: 0 },
-  visible: (i: number) => ({
-    y: 0,
-    opacity: 1,
-    transition: {
-      delay: i * 0.03,
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-};
-
-const wordVariants = {
-  hidden: { y: 50, opacity: 0, rotateX: 45 },
-  visible: (i: number) => ({
-    y: 0,
-    opacity: 1,
-    rotateX: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-};
+import { motion } from "framer-motion";
+import { Sparkles, Zap, Users, Rocket } from "lucide-react";
+import { processSteps } from "@/data/process";
 
 export function Process() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Parallax transforms for cards
-  const card1Y = useTransform(scrollYProgress, [0, 1], [100, -50]);
-  const card2Y = useTransform(scrollYProgress, [0, 1], [150, -80]);
-  const card3Y = useTransform(scrollYProgress, [0, 1], [100, -50]);
-  
-  const card1Rotate = useTransform(scrollYProgress, [0, 0.5, 1], [-12, -8, -4]);
-  const card3Rotate = useTransform(scrollYProgress, [0, 0.5, 1], [12, 8, 4]);
-  
-  // Scale transforms
-  const card1Scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
-  const card2Scale = useTransform(scrollYProgress, [0, 0.5], [0.85, 1.02]);
-  const card3Scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
-
-  // Background parallax
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-
-  // Dotted line progress
-  const lineProgress1 = useTransform(scrollYProgress, [0.1, 0.4], [0, 1]);
-  const lineProgress2 = useTransform(scrollYProgress, [0.2, 0.5], [0, 1]);
-
-  const headingWords = "Here's how it works".split(" ");
-  const subHeadingText = "Simple, Fast & Effective";
-
   return (
-    <section 
-      ref={sectionRef}
-      id="process" 
-      className="py-32 md:py-44 bg-muted/50 overflow-hidden relative"
-    >
-      {/* Animated background elements */}
-      <motion.div 
-        style={{ y: bgY }}
-        className="absolute inset-0 pointer-events-none"
-      >
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      </motion.div>
-
-      <div className="container mx-auto px-6 md:px-8 relative z-10">
-        {/* Enhanced Header */}
-        <div className="text-center mb-20 md:mb-32">
-          {/* Top tag with line animation */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-center gap-4 mb-8"
-          >
-            <motion.span 
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="w-20 h-px bg-gradient-to-r from-transparent to-muted-foreground/50 origin-right"
-            />
-            <motion.span 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-muted-foreground italic text-sm md:text-base tracking-widest uppercase"
-            >
-              Our Process
-            </motion.span>
-            <motion.span 
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="w-20 h-px bg-gradient-to-l from-transparent to-muted-foreground/50 origin-left"
-            />
-          </motion.div>
-
-          {/* Main heading with word-by-word reveal */}
-          <div className="overflow-hidden mb-6">
-            <motion.h2
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-tight flex flex-wrap justify-center gap-x-4"
-            >
-              {headingWords.map((word, i) => (
-                <motion.span
-                  key={i}
-                  custom={i}
-                  variants={wordVariants}
-                  className="inline-block"
-                  style={{ perspective: "1000px" }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.h2>
-          </div>
-
-          {/* Sub-heading with character reveal */}
-          <div className="overflow-hidden mb-8">
-            <motion.p
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-xl md:text-2xl text-primary font-medium flex justify-center"
-            >
-              {subHeadingText.split("").map((char, i) => (
-                <motion.span
-                  key={i}
-                  custom={i}
-                  variants={letterVariants}
-                  className="inline-block"
-                >
-                  {char === " " ? "\u00A0" : char}
-                </motion.span>
-              ))}
-            </motion.p>
-          </div>
-
-          {/* Description with fade-up */}
-          <motion.p
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed"
-          >
-            We've streamlined our design process to deliver exceptional results with speed and precision.
-          </motion.p>
-
-          {/* Animated decorative element */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="flex justify-center mt-10"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="w-12 h-12 rounded-full border border-dashed border-primary/30 flex items-center justify-center"
-            >
-              <div className="w-2 h-2 bg-primary rounded-full" />
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Cards Container */}
-        <div className="relative flex items-center justify-center min-h-[550px] md:min-h-[600px]">
+    <section id="process" className="py-24 md:py-32 bg-background">
+      <div className="container mx-auto px-6 md:px-8">
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5">
           
-          {/* Dotted connecting line 1 (Card 1 to Card 2) */}
-          <svg
-            className="absolute z-15 pointer-events-none hidden md:block"
-            style={{ 
-              left: "calc(50% - 220px)", 
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "200px",
-              height: "100px"
-            }}
-            viewBox="0 0 200 100"
-            fill="none"
-          >
-            <motion.path
-              d="M0 80 Q 50 80, 100 50 T 200 20"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray="6 8"
-              fill="none"
-              style={{
-                pathLength: lineProgress1,
-                opacity: lineProgress1,
-              }}
-            />
-            <motion.circle
-              cx="0"
-              cy="80"
-              r="4"
-              fill="hsl(var(--primary))"
-              style={{ opacity: lineProgress1 }}
-            />
-            <motion.circle
-              cx="200"
-              cy="20"
-              r="4"
-              fill="hsl(var(--primary))"
-              style={{ opacity: lineProgress1 }}
-            />
-          </svg>
-
-          {/* Dotted connecting line 2 (Card 2 to Card 3) */}
-          <svg
-            className="absolute z-15 pointer-events-none hidden md:block"
-            style={{ 
-              left: "calc(50% + 20px)", 
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "200px",
-              height: "100px"
-            }}
-            viewBox="0 0 200 100"
-            fill="none"
-          >
-            <motion.path
-              d="M0 20 Q 50 20, 100 50 T 200 80"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray="6 8"
-              fill="none"
-              style={{
-                pathLength: lineProgress2,
-                opacity: lineProgress2,
-              }}
-            />
-            <motion.circle
-              cx="0"
-              cy="20"
-              r="4"
-              fill="hsl(var(--primary))"
-              style={{ opacity: lineProgress2 }}
-            />
-            <motion.circle
-              cx="200"
-              cy="80"
-              r="4"
-              fill="hsl(var(--primary))"
-              style={{ opacity: lineProgress2 }}
-            />
-          </svg>
-          
-          {/* Card 1 - Left */}
+          {/* Large Left Card - Discovery */}
           <motion.div
-            style={{ 
-              y: card1Y, 
-              rotate: card1Rotate,
-              scale: card1Scale,
-            }}
-            initial={{ opacity: 0, x: -100 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-[2%] md:left-[8%] lg:left-[14%] z-10"
-          >
-            <motion.div 
-              whileHover={{ scale: 1.03, rotate: -4 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="w-60 md:w-72 lg:w-80 h-[360px] md:h-[400px] bg-background rounded-3xl shadow-xl shadow-foreground/5 p-8 flex flex-col border border-border/50 group cursor-pointer"
-            >
-              {/* Large Number */}
-              <span className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500">
-                1
-              </span>
-
-              {/* Content at bottom */}
-              <div className="mt-auto">
-                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                  {processSteps[0].title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {processSteps[0].description}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Card 2 - Center (elevated) */}
-          <motion.div
-            style={{ 
-              y: card2Y,
-              scale: card2Scale,
-            }}
-            initial={{ opacity: 0, y: 100 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-20"
+            transition={{ duration: 0.5 }}
+            className="md:col-span-5 md:row-span-2 bg-muted/30 border border-border/40 rounded-2xl p-8 flex flex-col min-h-[500px]"
           >
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -10 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="w-64 md:w-76 lg:w-84 h-[380px] md:h-[430px] bg-background rounded-3xl shadow-2xl shadow-foreground/15 p-8 flex flex-col border border-primary/20 group cursor-pointer relative overflow-hidden"
-            >
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              {/* Large Number */}
-              <span className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500 relative z-10">
-                2
-              </span>
-
-              {/* Content at bottom */}
-              <div className="mt-auto relative z-10">
-                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                  {processSteps[1].title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {processSteps[1].description}
-                </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-foreground leading-tight">
+              {processSteps[0].title.split(" ")[0]}{" "}
+              <span className="text-muted-foreground">{processSteps[0].title.split(" ").slice(1).join(" ")}</span>
+            </h2>
+            
+            <div className="flex-1 flex items-center justify-center mt-8">
+              <div className="w-full h-80 bg-gradient-to-br from-muted to-muted/50 rounded-xl flex items-center justify-center">
+                <div className="text-8xl font-bold text-foreground/10">01</div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
 
-          {/* Card 3 - Right */}
+          {/* Top Middle Card - Concept */}
           <motion.div
-            style={{ 
-              y: card3Y, 
-              rotate: card3Rotate,
-              scale: card3Scale,
-            }}
-            initial={{ opacity: 0, x: 100 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-[2%] md:right-[8%] lg:right-[14%] z-10"
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="md:col-span-4 bg-muted/30 border border-border/40 rounded-2xl p-6 flex flex-col"
           >
-            <motion.div 
-              whileHover={{ scale: 1.03, rotate: 4 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="w-60 md:w-72 lg:w-80 h-[360px] md:h-[400px] bg-background rounded-3xl shadow-xl shadow-foreground/5 p-8 flex flex-col border border-border/50 group cursor-pointer"
-            >
-              {/* Large Number */}
-              <span className="font-light text-7xl md:text-8xl text-foreground/10 leading-none tracking-tighter group-hover:text-primary/20 transition-colors duration-500">
-                3
-              </span>
-
-              {/* Content at bottom */}
-              <div className="mt-auto">
-                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                  {processSteps[2].title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {processSteps[2].description}
-                </p>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-medium text-foreground">
+                {processSteps[1].title}
+              </h3>
+              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-muted-foreground" />
               </div>
-            </motion.div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {processSteps[1].description}
+            </p>
+          </motion.div>
+
+          {/* Top Right Card - Development */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="md:col-span-3 md:row-span-2 bg-muted/30 border border-border/40 rounded-2xl p-6 flex flex-col"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-medium text-foreground">
+                {processSteps[2].title}
+              </h3>
+              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
+                <Users className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              {processSteps[2].description}
+            </p>
+            
+            <div className="flex-1 flex items-end justify-center">
+              <div className="w-32 h-56 bg-foreground rounded-3xl border-4 border-foreground/80 flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <div className="text-4xl font-bold text-background/20">03</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Middle Center Card - Image with overlay */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="md:col-span-4 bg-gradient-to-br from-muted to-muted/70 rounded-2xl overflow-hidden relative min-h-[200px]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <h3 className="text-xl md:text-2xl font-medium text-background">
+                Fast & Efficient Turnarounds
+              </h3>
+            </div>
+          </motion.div>
+
+          {/* Bottom Middle Card - Launch */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="md:col-span-4 bg-muted/30 border border-border/40 rounded-2xl p-6"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-medium text-foreground">
+                {processSteps[3].title}
+              </h3>
+              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
+                <Rocket className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              {processSteps[3].description}
+            </p>
+            
+            {/* Social Proof */}
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-background flex items-center justify-center"
+                  >
+                    <span className="text-xs font-medium text-foreground/60">{i}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <svg key={i} className="w-3 h-3 text-primary fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-xs text-muted-foreground">200+ Satisfied Clients</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Bottom Right Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="md:col-span-3 bg-muted/30 border border-border/40 rounded-2xl p-6"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-medium text-foreground">
+                Future-Ready Solutions
+              </h3>
+              <div className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center">
+                <Zap className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Our designs grow with your brand, ensuring long-term success and adaptability.
+            </p>
           </motion.div>
 
         </div>
-
-        {/* Modern Minimal CTA */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex justify-center mt-20 md:mt-28"
-        >
-          <motion.a
-            href="#contact"
-            className="group relative inline-flex items-center gap-6 cursor-pointer"
-            whileHover={{ x: 5 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          >
-            {/* Text with underline animation */}
-            <span className="relative text-xl md:text-2xl lg:text-3xl font-medium text-foreground tracking-tight">
-              Start a Project
-              <motion.span 
-                className="absolute left-0 -bottom-1 h-px bg-foreground origin-left"
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              />
-              <span className="absolute left-0 -bottom-1 w-full h-px bg-primary scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-            </span>
-            
-            {/* Animated Arrow Circle - pointing upper right */}
-            <motion.span 
-              className="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full border border-foreground/20 group-hover:border-primary transition-colors duration-300"
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              {/* Arrow pointing upper right */}
-              <svg 
-                width="12" 
-                height="12" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                className="text-foreground group-hover:text-primary transition-colors duration-300"
-              >
-                <motion.path 
-                  d="M7 17L17 7" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                />
-                <motion.path 
-                  d="M7 7h10v10" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                />
-              </svg>
-              
-              {/* Hover ring */}
-              <span className="absolute inset-0 rounded-full border border-primary scale-100 opacity-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-700" />
-            </motion.span>
-          </motion.a>
-        </motion.div>
       </div>
     </section>
   );
