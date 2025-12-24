@@ -1,7 +1,21 @@
 import React, { useState, useRef } from "react";
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { processSteps } from "@/data/process";
 import { ArrowRight } from "lucide-react";
+import { Marquee } from "@/components/ui/Marquee";
+
+const marqueeKeywords = [
+  "Discovery",
+  "Strategy", 
+  "Design",
+  "Development",
+  "Innovation",
+  "Collaboration",
+  "Excellence",
+  "Precision",
+  "Launch",
+  "Growth",
+];
 
 export function Process() {
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
@@ -132,6 +146,11 @@ export function Process() {
             </motion.div>
           </motion.a>
         </motion.div>
+      </div>
+
+      {/* Marquee Section */}
+      <div className="mt-20 md:mt-28 py-8 border-t border-b border-border/50">
+        <Marquee items={marqueeKeywords} speed={25} direction="left" />
       </div>
     </section>
   );
