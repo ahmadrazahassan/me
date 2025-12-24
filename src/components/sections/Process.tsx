@@ -394,9 +394,9 @@ export function Process() {
 
         </div>
 
-        {/* Modern CTA Button */}
+        {/* Modern Minimal CTA */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -404,54 +404,63 @@ export function Process() {
         >
           <motion.a
             href="#contact"
-            className="group relative inline-flex items-center gap-4 px-8 py-4 bg-foreground text-background rounded-full font-medium text-base md:text-lg overflow-hidden cursor-pointer"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="group relative inline-flex items-center gap-6 cursor-pointer"
+            whileHover={{ x: 5 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
-            {/* Background hover effect */}
-            <motion.div
-              className="absolute inset-0 bg-primary"
-              initial={{ x: "-100%" }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            />
+            {/* Text with underline animation */}
+            <span className="relative text-xl md:text-2xl lg:text-3xl font-medium text-foreground tracking-tight">
+              Start a project with me
+              <motion.span 
+                className="absolute left-0 -bottom-1 h-px bg-foreground origin-left"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              />
+              <span className="absolute left-0 -bottom-1 w-full h-px bg-primary scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+            </span>
             
-            {/* Text */}
-            <span className="relative z-10">Start a project with me</span>
-            
-            {/* Animated Arrow */}
-            <span className="relative z-10 flex items-center justify-center w-6 h-6 overflow-hidden">
-              <motion.span
-                className="absolute flex items-center"
-                initial={{ x: 0 }}
-                whileHover={{ x: 30 }}
-                transition={{ duration: 0.3 }}
+            {/* Animated Arrow Circle */}
+            <motion.span 
+              className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-foreground/20 group-hover:border-primary transition-colors duration-300"
+              whileHover={{ scale: 1.1, rotate: -45 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              {/* Arrow */}
+              <svg 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                className="text-foreground group-hover:text-primary transition-colors duration-300 -rotate-45"
               >
-                <svg 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
+                <motion.path 
+                  d="M7 17L17 7" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                />
+                <motion.path 
+                  d="M7 7h10v10" 
                   stroke="currentColor" 
                   strokeWidth="2" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
-                  className="group-hover:translate-x-1 transition-transform duration-300"
-                >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </motion.span>
-            </span>
-            
-            {/* Magnetic glow on hover */}
-            <motion.div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{
-                background: "radial-gradient(circle at center, hsl(var(--primary) / 0.3) 0%, transparent 70%)",
-              }}
-            />
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                />
+              </svg>
+              
+              {/* Hover ring */}
+              <span className="absolute inset-0 rounded-full border border-primary scale-100 opacity-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-700" />
+            </motion.span>
           </motion.a>
         </motion.div>
       </div>
