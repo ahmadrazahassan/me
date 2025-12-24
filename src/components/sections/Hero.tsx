@@ -26,8 +26,11 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex flex-col bg-foreground overflow-hidden"
+      className="relative min-h-screen flex flex-col overflow-hidden pt-14 md:pt-16"
     >
+      {/* Dark background with rounded top corners */}
+      <div className="absolute inset-0 top-14 md:top-16 bg-foreground rounded-t-[2rem] md:rounded-t-[3rem]" />
+      
       {/* Background smoke/blur effect with parallax */}
       <motion.div
         className="absolute inset-0"

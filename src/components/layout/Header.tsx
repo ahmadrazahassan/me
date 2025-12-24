@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
 import { navigationItems } from "@/data/navigation";
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <>
@@ -22,18 +12,18 @@ export function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-50 bg-transparent"
+        className="fixed top-0 left-0 right-0 z-50 bg-background"
       >
         <nav
-          className="container-wide flex items-center justify-between h-16 md:h-20"
+          className="container-wide flex items-center justify-between h-14 md:h-16"
           aria-label="Main navigation"
         >
           {/* Logo */}
           <a
             href="#"
-            className="font-syne font-bold text-xl text-background"
+            className="font-syne font-bold text-base text-foreground"
           >
-            Ahmed Inc.
+            Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
           </a>
 
           {/* Desktop Navigation - Centered */}
@@ -42,11 +32,11 @@ export function Header() {
               <a
                 key={item.id}
                 href={item.href}
-                className="text-sm text-background/60 hover:text-background transition-colors relative"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative"
               >
                 {item.label}
                 {index === 1 && (
-                  <sup className="text-[10px] text-background/40 ml-0.5">27</sup>
+                  <sup className="text-[10px] text-muted-foreground/60 ml-0.5">27</sup>
                 )}
               </a>
             ))}
@@ -54,14 +44,13 @@ export function Header() {
 
           {/* Hamburger Menu */}
           <button
-            className="p-2 text-background"
+            className="p-2 text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
             <div className="w-7 flex flex-col gap-1.5">
-              <span className="block h-0.5 bg-background w-full"></span>
-              <span className="block h-0.5 bg-background w-full"></span>
-              <span className="block h-0.5 bg-background w-3/4 ml-auto"></span>
+              <span className="block h-0.5 bg-foreground w-full"></span>
+              <span className="block h-0.5 bg-foreground w-3/4 ml-auto"></span>
             </div>
           </button>
         </nav>
@@ -84,8 +73,8 @@ export function Header() {
               className="absolute inset-0 flex flex-col p-6"
             >
               <div className="flex items-center justify-between mb-12">
-                <span className="font-syne font-bold text-xl text-background">
-                  Ahmed Inc.
+                <span className="font-syne font-bold text-base text-background">
+                  Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
                 </span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
