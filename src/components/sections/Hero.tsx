@@ -89,7 +89,7 @@ export function Hero() {
             {services.map((service, index) => (
               <span
                 key={index}
-                className="text-background/80 text-sm whitespace-nowrap"
+                className="text-background/50 text-sm whitespace-nowrap"
               >
                 {service}
               </span>
