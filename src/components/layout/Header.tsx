@@ -1,7 +1,51 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { navigationItems } from "@/data/navigation";
+
+// Animated nav link component
+function NavLink({ href, children, superscript }: { href: string; children: React.ReactNode; superscript?: string }) {
+  return (
+    <motion.a
+      href={href}
+      className="relative text-sm text-muted-foreground hover:text-foreground transition-colors group py-1"
+      whileHover="hover"
+    >
+      <span className="relative inline-block overflow-hidden">
+        {/* Default text */}
+        <motion.span
+          className="inline-block"
+          variants={{
+            hover: { y: "-100%", transition: { duration: 0.3, ease: [0.6, 0.01, 0, 0.9] } }
+          }}
+        >
+          {children}
+        </motion.span>
+        {/* Hover text (duplicate) */}
+        <motion.span
+          className="absolute left-0 top-full inline-block"
+          variants={{
+            hover: { y: "-100%", transition: { duration: 0.3, ease: [0.6, 0.01, 0, 0.9] } }
+          }}
+        >
+          {children}
+        </motion.span>
+      </span>
+      {superscript && (
+        <sup className="text-[10px] text-muted-foreground/60 ml-0.5">{superscript}</sup>
+      )}
+      {/* Underline effect */}
+      <motion.span
+        className="absolute bottom-0 left-0 h-[1px] bg-foreground origin-left"
+        initial={{ scaleX: 0 }}
+        variants={{
+          hover: { scaleX: 1, transition: { duration: 0.3, ease: [0.6, 0.01, 0, 0.9] } }
+        }}
+        style={{ width: "100%" }}
+      />
+    </motion.a>
+  );
+}
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,40 +63,53 @@ export function Header() {
           aria-label="Main navigation"
         >
           {/* Logo */}
-          <a
+          <motion.a
             href="#"
-            className="font-syne font-bold text-base text-foreground"
+            className="font-syne font-bold text-base text-foreground relative group"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.2 }}
           >
-            Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
-          </a>
+            <span className="relative">
+              Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
+            </span>
+          </motion.a>
 
           {/* Desktop Navigation - Centered */}
-          <div className="hidden lg:flex items-center gap-12 absolute left-1/2 -translate-x-1/2">
+          <div className="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
             {navigationItems.slice(0, 4).map((item, index) => (
-              <a
+              <NavLink
                 key={item.id}
                 href={item.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative"
+                superscript={index === 1 ? "27" : undefined}
               >
                 {item.label}
-                {index === 1 && (
-                  <sup className="text-[10px] text-muted-foreground/60 ml-0.5">27</sup>
-                )}
-              </a>
+              </NavLink>
             ))}
           </div>
 
           {/* Hamburger Menu */}
-          <button
-            className="p-2 text-foreground"
+          <motion.button
+            className="p-2 text-foreground relative group"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
+            whileHover="hover"
+            whileTap={{ scale: 0.95 }}
           >
             <div className="w-7 flex flex-col gap-1.5">
-              <span className="block h-0.5 bg-foreground w-full"></span>
-              <span className="block h-0.5 bg-foreground w-3/4 ml-auto"></span>
+              <motion.span 
+                className="block h-0.5 bg-foreground w-full origin-right"
+                variants={{
+                  hover: { scaleX: 0.8, transition: { duration: 0.2 } }
+                }}
+              />
+              <motion.span 
+                className="block h-0.5 bg-foreground w-3/4 ml-auto"
+                variants={{
+                  hover: { scaleX: 1.2, transition: { duration: 0.2 } }
+                }}
+              />
             </div>
-          </button>
+          </motion.button>
         </nav>
       </motion.header>
 
@@ -76,13 +133,15 @@ export function Header() {
                 <span className="font-syne font-bold text-base text-background">
                   Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
                 </span>
-                <button
+                <motion.button
                   onClick={() => setIsMobileMenuOpen(false)}
                   aria-label="Close menu"
                   className="p-2 text-background"
+                  whileHover={{ rotate: 90 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <X className="h-6 w-6" />
-                </button>
+                </motion.button>
               </div>
 
               <nav className="flex-1 flex flex-col justify-center space-y-6">
@@ -90,13 +149,24 @@ export function Header() {
                   <motion.a
                     key={item.id}
                     href={item.href}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ delay: index * 0.08, duration: 0.4, ease: [0.6, 0.01, 0, 0.9] }}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-3xl font-syne font-bold text-background hover:text-background/70 transition-colors"
+                    className="text-4xl font-syne font-bold text-background hover:text-background/70 transition-colors relative group overflow-hidden"
+                    whileHover={{ x: 10 }}
                   >
-                    {item.label}
+                    <span className="relative inline-block">
+                      {item.label}
+                      <motion.span
+                        className="absolute bottom-0 left-0 h-[2px] bg-background/50 origin-left"
+                        initial={{ scaleX: 0 }}
+                        whileHover={{ scaleX: 1 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ width: "100%" }}
+                      />
+                    </span>
                   </motion.a>
                 ))}
               </nav>

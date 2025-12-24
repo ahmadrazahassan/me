@@ -99,7 +99,7 @@ export function CustomCursor() {
         <motion.div
           className="relative flex items-center justify-center"
           animate={{
-            scale: isClicking ? 0.8 : isHovering ? 1.5 : 1,
+            scale: isClicking ? 0.7 : isHovering ? 1.2 : 1,
             opacity: isHidden ? 0 : 1,
           }}
           transition={{ duration: 0.15, ease: "easeOut" }}
@@ -107,15 +107,15 @@ export function CustomCursor() {
           <div
             className="rounded-full bg-background"
             style={{
-              width: isHovering ? "40px" : "12px",
-              height: isHovering ? "40px" : "12px",
-              marginLeft: isHovering ? "-20px" : "-6px",
-              marginTop: isHovering ? "-20px" : "-6px",
+              width: isHovering ? "24px" : "8px",
+              height: isHovering ? "24px" : "8px",
+              marginLeft: isHovering ? "-12px" : "-4px",
+              marginTop: isHovering ? "-12px" : "-4px",
               transition: "width 0.2s ease, height 0.2s ease, margin 0.2s ease",
             }}
           />
           {cursorText && (
-            <span className="absolute text-foreground text-[10px] font-medium whitespace-nowrap">
+            <span className="absolute text-foreground text-[8px] font-medium whitespace-nowrap">
               {cursorText}
             </span>
           )}
@@ -131,14 +131,14 @@ export function CustomCursor() {
         }}
       >
         <motion.div
-          className="rounded-full border-2 border-background"
+          className="rounded-full border border-background"
           animate={{
-            width: isHovering ? 60 : 40,
-            height: isHovering ? 60 : 40,
-            marginLeft: isHovering ? -30 : -20,
-            marginTop: isHovering ? -30 : -20,
-            opacity: isHidden ? 0 : isClicking ? 0.5 : 0.4,
-            scale: isClicking ? 0.9 : 1,
+            width: isHovering ? 36 : 24,
+            height: isHovering ? 36 : 24,
+            marginLeft: isHovering ? -18 : -12,
+            marginTop: isHovering ? -18 : -12,
+            opacity: isHidden ? 0 : isClicking ? 0.3 : 0.5,
+            scale: isClicking ? 0.85 : 1,
           }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         />
