@@ -57,39 +57,39 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            {/* Main brand name */}
+            {/* Main brand name - reduced size */}
             <h1 className="font-syne font-bold text-background leading-[0.85] tracking-tighter">
-              <span className="text-[15vw] md:text-[18vw] lg:text-[20vw] block">
+              <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block">
                 Ahmed
               </span>
-              <span className="text-[15vw] md:text-[18vw] lg:text-[20vw] block -mt-[2vw]">
-                Inc.<span className="inline-flex items-center justify-center border-4 border-background rounded-full w-[8vw] h-[8vw] md:w-[10vw] md:h-[10vw] ml-2 align-middle text-[5vw] md:text-[6vw]">®</span>
+              <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block -mt-[2vw]">
+                Inc.
               </span>
             </h1>
 
-            {/* Studio text with separate parallax */}
+            {/* Studio text */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               style={{ y: studioY }}
-              className="font-syne font-bold text-background text-4xl md:text-6xl lg:text-7xl mt-4 md:mt-6 text-center md:text-left md:ml-[30%]"
+              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-4 md:mt-6 text-center md:text-left md:ml-[25%]"
             >
               Studio
             </motion.p>
           </motion.div>
 
-          {/* Services list - positioned on the right */}
+          {/* Services list - fixed positioning */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="absolute right-0 top-1/3 hidden lg:flex flex-col gap-2 text-right pr-4"
+            className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-3 text-right"
           >
             {services.map((service, index) => (
               <span
                 key={index}
-                className="text-background/80 text-sm md:text-base"
+                className="text-background/80 text-sm whitespace-nowrap"
               >
                 {service}
               </span>
