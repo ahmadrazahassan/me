@@ -48,10 +48,10 @@ export function Hero() {
       </div>
 
       {/* Main Content */}
-      <div className="container-wide relative z-10 flex-1 flex flex-col pt-24 md:pt-32">
+      <div className="container-wide relative z-10 flex-1 flex flex-col pt-16 md:pt-24 lg:pt-32">
         {/* Large Typography with parallax */}
         <motion.div
-          className="flex-1 flex flex-col justify-center"
+          className="flex-1 flex flex-col justify-center -mt-8 md:-mt-16"
           style={{ y: textY, opacity, scale }}
         >
           <motion.div
@@ -60,9 +60,9 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            {/* Main brand name - reduced size */}
-            <h1 className="font-syne font-bold text-background leading-[0.85] tracking-tighter">
-              <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block">
+            {/* Main brand name with primary color */}
+            <h1 className="font-syne font-bold text-primary leading-[0.9] tracking-[-0.04em]">
+              <span className="text-[15vw] md:text-[16vw] lg:text-[18vw] block">
                 Ahmed
               </span>
             </h1>
@@ -73,7 +73,7 @@ export function Hero() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               style={{ y: studioY }}
-              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-2 md:mt-4 text-center md:text-left md:ml-[5%]"
+              className="font-syne font-bold text-background text-4xl md:text-6xl lg:text-7xl mt-6 md:mt-8 ml-1 md:ml-2"
             >
               Studio
             </motion.p>
