@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         syne: ["Syne", "sans-serif"],
         inter: ["Inter", "sans-serif"],
+        bebas: ["Bebas Neue", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
