@@ -1,85 +1,153 @@
-import React from "react";
-import { Linkedin, Twitter, Instagram } from "lucide-react";
+import React, { useRef } from "react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { motion, useInView } from "framer-motion";
 import { navigationItems } from "@/data/navigation";
 
 export function Footer() {
-  const socialLinks = [
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+
+  const footerLinks = [
+    { number: "01", label: "Home", href: "#home" },
+    { number: "02", label: "About", href: "#about" },
+    { number: "03", label: "Work", href: "#work" },
+    { number: "04", label: "Services", href: "#services" },
+    { number: "05", label: "Contact", href: "#contact" },
   ];
 
   return (
-    <footer className="bg-foreground text-background py-16">
+    <footer ref={containerRef} className="bg-background text-foreground pt-24 pb-8">
       <div className="container-wide">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Brand */}
-          <div className="md:col-span-2">
-            <h3 className="font-syne font-bold text-2xl mb-4">Ahmed Inc.</h3>
-            <p className="text-background/60 max-w-sm">
-              A cutting-edge digital design studio dedicated to crafting bold,
-              immersive experiences that elevate brands.
-            </p>
+        {/* Top Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
+          {/* Left - Contact Info */}
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+              className="text-muted-foreground text-lg mb-2 font-syne"
+            >
+              Stay connected<span className="text-xs align-super">®</span>
+            </motion.p>
+            
+            <motion.a
+              href="mailto:hello@ahmedinc.com"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-3xl md:text-4xl lg:text-5xl font-syne font-bold underline underline-offset-8 decoration-2 hover:text-primary transition-colors block mb-6"
+            >
+              hello@ahmedinc.com
+            </motion.a>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-muted-foreground max-w-sm mb-8 leading-relaxed"
+            >
+              Crafted with <span className="text-foreground">creativity</span> and{" "}
+              <span className="text-foreground">passion</span>. Let's stay connected
+              reach out anytime!
+            </motion.p>
+            
+            <motion.a
+              href="#contact"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="inline-flex items-center gap-3 group"
+            >
+              <span className="w-10 h-10 rounded-full bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <ArrowRight className="w-4 h-4 text-primary-foreground" />
+              </span>
+              <span className="text-sm font-medium">Contact Now</span>
+            </motion.a>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <h4 className="font-syne font-semibold text-sm uppercase tracking-wider mb-4 text-background/60">
-              Navigation
-            </h4>
-            <nav className="space-y-3">
-              {navigationItems.map((item) => (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  className="block text-background/80 hover:text-background transition-colors"
+          {/* Right - Navigation Links */}
+          <div className="lg:pl-12">
+            <nav className="space-y-0">
+              {footerLinks.map((link, index) => (
+                <motion.a
+                  key={link.number}
+                  href={link.href}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  className="flex items-center justify-between py-4 border-b border-border/40 group hover:border-foreground/40 transition-colors"
                 >
-                  {item.label}
-                </a>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {link.number} /
+                    </span>
+                    <span className="text-base font-medium group-hover:translate-x-1 transition-transform">
+                      {link.label}
+                    </span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+                </motion.a>
               ))}
             </nav>
           </div>
+        </div>
 
-          {/* Contact */}
-          <div>
-            <h4 className="font-syne font-semibold text-sm uppercase tracking-wider mb-4 text-background/60">
-              Get in Touch
-            </h4>
-            <div className="space-y-3 text-background/80">
-              <p>hello@ahmedinc.com</p>
-              <p>+1 (555) 123-4567</p>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex gap-4 mt-6">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-10 h-10 rounded-full border border-background/20 flex items-center justify-center text-background/60 hover:text-background hover:border-background/40 transition-colors"
-                >
-                  <social.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
+        {/* Large Brand Name */}
+        <div className="relative mb-12 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="flex items-end justify-between"
+          >
+            <h2 className="font-syne font-black text-[12vw] md:text-[14vw] lg:text-[16vw] leading-[0.8] tracking-tighter uppercase">
+              AHMED
+            </h2>
+            
+            {/* Decorative Image Placeholder */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="hidden md:block w-48 lg:w-64 h-48 lg:h-64 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-4 flex-shrink-0"
+            />
+          </motion.div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-background/40">
-            © 2010–2025 Ahmed Inc. All rights reserved.
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          className="pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p className="text-sm text-muted-foreground">
+            Copyright © Ahmed Inc. 2025
           </p>
-          <div className="flex gap-6 text-sm text-background/40">
-            <a href="#" className="hover:text-background/60 transition-colors">
+          
+          <div className="flex items-center gap-6">
+            <a
+              href="#"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+            >
               Privacy Policy
             </a>
-            <a href="#" className="hover:text-background/60 transition-colors">
+            <a
+              href="#"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+            >
               Terms of Service
             </a>
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 text-sm hover:bg-foreground hover:text-background transition-all"
+            >
+              <ArrowUpRight className="w-3 h-3" />
+              Design Expert
+            </a>
           </div>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );
