@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigationItems } from "@/data/navigation";
-import { PillButton } from "@/components/ui/PillButton";
-import { IconButton } from "@/components/ui/IconButton";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,13 +19,13 @@ export function Header() {
   return (
     <>
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
+            ? "bg-foreground/95 backdrop-blur-xl"
             : "bg-transparent"
         )}
       >
@@ -38,41 +36,39 @@ export function Header() {
           {/* Logo */}
           <a
             href="#"
-            className="font-syne font-bold text-xl md:text-2xl text-foreground"
+            className="font-syne font-bold text-xl text-background"
           >
-            Ahmed Inc.
+            Ahmed Inc.<span className="text-background/80">®</span>
           </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
-            {navigationItems.map((item) => (
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden lg:flex items-center gap-12 absolute left-1/2 -translate-x-1/2">
+            {navigationItems.slice(0, 4).map((item, index) => (
               <a
                 key={item.id}
                 href={item.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
+                className="text-sm text-background/70 hover:text-background transition-colors relative"
               >
                 {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+                {index === 1 && (
+                  <sup className="text-[10px] text-background/50 ml-0.5">27</sup>
+                )}
               </a>
             ))}
           </div>
 
-          {/* CTA + Mobile Menu Button */}
-          <div className="flex items-center gap-4">
-            <div className="hidden md:block">
-              <PillButton href="#contact" showArrow size="sm">
-                Let's talk
-              </PillButton>
+          {/* Hamburger Menu */}
+          <button
+            className="p-2 text-background"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <div className="w-7 flex flex-col gap-1.5">
+              <span className="block h-0.5 bg-background w-full"></span>
+              <span className="block h-0.5 bg-background w-full"></span>
+              <span className="block h-0.5 bg-background w-3/4 ml-auto"></span>
             </div>
-
-            <button
-              className="lg:hidden p-2 text-foreground"
-              onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-          </div>
+          </button>
         </nav>
       </motion.header>
 
@@ -83,7 +79,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-background lg:hidden"
+            className="fixed inset-0 z-50 bg-foreground"
           >
             <motion.div
               initial={{ x: "100%" }}
@@ -93,11 +89,13 @@ export function Header() {
               className="absolute inset-0 flex flex-col p-6"
             >
               <div className="flex items-center justify-between mb-12">
-                <span className="font-syne font-bold text-xl">Ahmed Inc.</span>
+                <span className="font-syne font-bold text-xl text-background">
+                  Ahmed Inc.<span className="text-background/80">®</span>
+                </span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   aria-label="Close menu"
-                  className="p-2"
+                  className="p-2 text-background"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -112,24 +110,12 @@ export function Header() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-3xl font-syne font-bold text-foreground hover:text-primary transition-colors"
+                    className="text-3xl font-syne font-bold text-background hover:text-background/70 transition-colors"
                   >
                     {item.label}
                   </motion.a>
                 ))}
               </nav>
-
-              <div className="mt-auto pt-8">
-                <PillButton
-                  href="#contact"
-                  showArrow
-                  size="lg"
-                  className="w-full justify-center"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Let's talk
-                </PillButton>
-              </div>
             </motion.div>
           </motion.div>
         )}
