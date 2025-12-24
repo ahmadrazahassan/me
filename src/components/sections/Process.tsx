@@ -1,24 +1,10 @@
 import React, { useState, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { processSteps } from "@/data/process";
-import { ArrowRight } from "lucide-react";
-import { Marquee } from "@/components/ui/Marquee";
-
-const marqueeKeywords = [
-  "Discovery",
-  "Strategy", 
-  "Design",
-  "Development",
-  "Innovation",
-  "Collaboration",
-  "Excellence",
-  "Precision",
-  "Launch",
-  "Growth",
-];
+import { ArrowUpRight, Sparkles } from "lucide-react";
 
 export function Process() {
-  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" });
@@ -28,135 +14,192 @@ export function Process() {
     offset: ["start end", "end start"],
   });
 
-  // Parallax values
-  const decorY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const decorOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   return (
     <section
       ref={sectionRef}
       id="process"
-      className="relative py-24 md:py-32 lg:py-40 bg-background overflow-hidden"
+      className="relative py-28 md:py-40 lg:py-52 bg-background overflow-hidden"
     >
-      {/* Subtle Grid Background */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }}
-      />
-
-      {/* Parallax Decorative Number */}
-      <motion.div
-        className="absolute -right-10 top-1/2 -translate-y-1/2 font-syne text-[40vw] font-bold text-foreground/[0.02] select-none pointer-events-none leading-none"
-        style={{ y: decorY, opacity: decorOpacity }}
+      {/* Animated Background Pattern */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ y: backgroundY }}
       >
-        04
+        <div className="absolute top-20 left-[10%] w-[500px] h-[500px] rounded-full bg-primary/[0.02] blur-3xl" />
+        <div className="absolute bottom-20 right-[10%] w-[400px] h-[400px] rounded-full bg-primary/[0.03] blur-3xl" />
       </motion.div>
 
       <div className="container-wide relative z-10">
-        {/* Header */}
-        <div ref={headerRef} className="mb-16 md:mb-24">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
-            {/* Left - Title */}
-            <div>
-              <motion.div
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                animate={isHeaderInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="w-2 h-2 rounded-full bg-primary" />
-                <span className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground">
-                  Our Process
-                </span>
-              </motion.div>
-
-              <div className="overflow-hidden">
-                <motion.h2
-                  className="font-syne text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-[-0.02em] leading-[1.1]"
-                  initial={{ y: "100%" }}
-                  animate={isHeaderInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  How we bring
-                </motion.h2>
-              </div>
-              <div className="overflow-hidden">
-                <motion.h2
-                  className="font-syne text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-[-0.02em] leading-[1.1]"
-                  initial={{ y: "100%" }}
-                  animate={isHeaderInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                >
-                  ideas to <span className="text-primary">life</span>
-                </motion.h2>
-              </div>
-            </div>
-
-            {/* Right - Description */}
-            <motion.p
-              className="text-muted-foreground text-lg max-w-md lg:text-right"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
+        {/* Premium Header */}
+        <div ref={headerRef} className="mb-20 md:mb-32">
+          {/* Eyebrow with animated line */}
+          <motion.div
+            className="flex items-center gap-4 mb-8"
+            initial={{ opacity: 0 }}
+            animate={isHeaderInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.div
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-primary/30"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={isHeaderInView ? { scale: 1, rotate: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.1, type: "spring" }}
             >
-              A refined methodology that ensures every project exceeds expectations through collaboration and precision.
-            </motion.p>
+              <Sparkles className="w-4 h-4 text-primary" />
+            </motion.div>
+            <motion.div
+              className="h-[1px] w-12 bg-primary/50"
+              initial={{ scaleX: 0 }}
+              animate={isHeaderInView ? { scaleX: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              style={{ originX: 0 }}
+            />
+            <motion.span 
+              className="text-xs font-medium tracking-[0.25em] uppercase text-primary"
+              initial={{ opacity: 0, x: -10 }}
+              animate={isHeaderInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              Our Process
+            </motion.span>
+          </motion.div>
+
+          {/* Main Title - Staggered reveal */}
+          <div className="max-w-4xl">
+            <div className="overflow-hidden">
+              <motion.h2
+                className="font-syne text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-[-0.03em] leading-[0.95]"
+                initial={{ y: "110%" }}
+                animate={isHeaderInView ? { y: 0 } : {}}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Crafting digital
+              </motion.h2>
+            </div>
+            <div className="overflow-hidden mt-1">
+              <motion.h2
+                className="font-syne text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-[-0.03em] leading-[0.95]"
+                initial={{ y: "110%" }}
+                animate={isHeaderInView ? { y: 0 } : {}}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
+              >
+                excellence<span className="text-primary">.</span>
+              </motion.h2>
+            </div>
           </div>
         </div>
 
-        {/* Process Cards - Horizontal Scroll on Mobile, Grid on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {processSteps.map((step, index) => (
-            <ProcessCard
-              key={step.id}
-              step={step}
-              index={index}
-              isHovered={hoveredStep === index}
-              onHover={() => setHoveredStep(index)}
-              onLeave={() => setHoveredStep(null)}
-              anyHovered={hoveredStep !== null}
+        {/* Process Grid - Bento Style */}
+        <div className="grid grid-cols-12 gap-4 md:gap-6">
+          {/* Left - Featured Step */}
+          <motion.div
+            className="col-span-12 lg:col-span-7"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <FeaturedCard 
+              step={processSteps[activeIndex]} 
+              index={activeIndex}
             />
-          ))}
+          </motion.div>
+
+          {/* Right - Step Selector */}
+          <motion.div
+            className="col-span-12 lg:col-span-5 flex flex-col gap-3"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          >
+            {processSteps.map((step, index) => (
+              <StepSelector
+                key={step.id}
+                step={step}
+                index={index}
+                isActive={activeIndex === index}
+                onClick={() => setActiveIndex(index)}
+              />
+            ))}
+          </motion.div>
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom Stats Row */}
         <motion.div
-          className="mt-16 md:mt-24 flex justify-center"
-          initial={{ opacity: 0, y: 30 }}
+          className="mt-16 md:mt-24 pt-12 border-t border-border/50"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <StatItem number="150+" label="Projects Delivered" delay={0} />
+            <StatItem number="98%" label="Client Satisfaction" delay={0.1} />
+            <StatItem number="12+" label="Years Experience" delay={0.2} />
+            <StatItem number="24h" label="Response Time" delay={0.3} />
+          </div>
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          className="mt-16 md:mt-20 flex flex-col sm:flex-row items-center justify-center gap-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <motion.a
             href="#contact"
-            className="group inline-flex items-center gap-4 px-8 py-4 bg-foreground text-background rounded-full font-syne font-semibold text-base hover:bg-primary transition-colors duration-300"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-full font-syne font-semibold text-base overflow-hidden"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <span>Start your project</span>
             <motion.div
-              className="flex items-center justify-center"
-              initial={{ x: 0 }}
-              whileHover={{ x: 4 }}
-            >
-              <ArrowRight className="w-5 h-5" />
-            </motion.div>
+              className="absolute inset-0 bg-primary"
+              initial={{ x: "-100%" }}
+              whileHover={{ x: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            />
+            <span className="relative z-10">Start a project</span>
+            <ArrowUpRight className="relative z-10 w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
+          </motion.a>
+          
+          <motion.a
+            href="#work"
+            className="inline-flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground font-medium transition-colors"
+            whileHover={{ x: 4 }}
+          >
+            View our work
+            <ArrowUpRight className="w-4 h-4" />
           </motion.a>
         </motion.div>
       </div>
 
-      {/* Marquee Section */}
-      <div className="mt-20 md:mt-28 py-8 border-t border-b border-border/50">
-        <Marquee items={marqueeKeywords} speed={25} direction="left" />
-      </div>
+      {/* Floating Elements */}
+      <motion.div
+        className="absolute top-[20%] right-[5%] w-2 h-2 rounded-full bg-primary"
+        animate={{ 
+          y: [0, -20, 0],
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[30%] left-[8%] w-3 h-3 rounded-full border border-primary/50"
+        animate={{ 
+          y: [0, 15, 0],
+          rotate: [0, 180, 360]
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
     </section>
   );
 }
 
-interface ProcessCardProps {
+interface FeaturedCardProps {
   step: {
     id: string;
     number: string;
@@ -164,110 +207,194 @@ interface ProcessCardProps {
     description: string;
   };
   index: number;
-  isHovered: boolean;
-  onHover: () => void;
-  onLeave: () => void;
-  anyHovered: boolean;
 }
 
-function ProcessCard({ step, index, isHovered, onHover, onLeave, anyHovered }: ProcessCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+function FeaturedCard({ step, index }: FeaturedCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
-      ref={ref}
-      className="group relative"
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      className="relative h-full min-h-[400px] md:min-h-[500px] p-8 md:p-12 rounded-[2rem] bg-foreground overflow-hidden cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      layout
     >
+      {/* Animated Background Circle */}
       <motion.div
-        className="relative h-full p-8 md:p-10 rounded-3xl border border-border bg-card overflow-hidden cursor-pointer"
-        animate={{
-          scale: anyHovered ? (isHovered ? 1.02 : 0.98) : 1,
-          opacity: anyHovered ? (isHovered ? 1 : 0.6) : 1,
+        className="absolute -bottom-20 -right-20 w-[300px] h-[300px] rounded-full bg-primary/20"
+        animate={{ 
+          scale: isHovered ? 1.3 : 1,
+          x: isHovered ? -20 : 0,
+          y: isHovered ? -20 : 0
         }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        whileHover={{ borderColor: "hsl(var(--primary))" }}
-      >
-        {/* Hover Background */}
-        <motion.div
-          className="absolute inset-0 bg-primary/5"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        />
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      />
 
-        {/* Content */}
-        <div className="relative z-10">
-          {/* Number */}
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Top Row */}
+        <div className="flex items-start justify-between mb-auto">
+          <motion.span
+            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-background/10 text-background font-mono text-xl font-bold"
+            key={step.number}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            {step.number}
+          </motion.span>
+
           <motion.div
-            className="flex items-center justify-between mb-12"
-            animate={{ y: isHovered ? -4 : 0 }}
+            className="w-12 h-12 rounded-full border border-background/20 flex items-center justify-center"
+            animate={{ 
+              rotate: isHovered ? 45 : 0,
+              backgroundColor: isHovered ? "hsl(var(--primary))" : "transparent",
+              borderColor: isHovered ? "hsl(var(--primary))" : "hsl(var(--background) / 0.2)"
+            }}
             transition={{ duration: 0.3 }}
           >
-            <span className="font-mono text-5xl md:text-6xl font-bold text-foreground/10 group-hover:text-primary/30 transition-colors duration-300">
-              {step.number}
-            </span>
-            
-            {/* Arrow indicator */}
-            <motion.div
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center"
-              animate={{
-                backgroundColor: isHovered ? "hsl(var(--primary))" : "transparent",
-                borderColor: isHovered ? "hsl(var(--primary))" : "hsl(var(--border))",
-                rotate: isHovered ? 45 : 0,
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              <ArrowRight 
-                className={`w-4 h-4 transition-colors duration-300 ${
-                  isHovered ? "text-primary-foreground" : "text-muted-foreground"
-                }`} 
-              />
-            </motion.div>
+            <ArrowUpRight className="w-5 h-5 text-background" />
           </motion.div>
+        </div>
 
-          {/* Title */}
+        {/* Title & Description */}
+        <div className="mt-auto">
           <motion.h3
-            className="font-syne text-xl md:text-2xl font-bold text-foreground mb-4 leading-tight"
-            animate={{ x: isHovered ? 8 : 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="font-syne text-3xl sm:text-4xl md:text-5xl font-bold text-background mb-4 leading-[1.1]"
+            key={step.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
             {step.title}
           </motion.h3>
 
-          {/* Description */}
           <motion.p
-            className="text-muted-foreground text-sm md:text-base leading-relaxed"
-            animate={{ opacity: isHovered ? 1 : 0.7 }}
-            transition={{ duration: 0.3 }}
+            className="text-background/60 text-base md:text-lg leading-relaxed max-w-md"
+            key={step.description}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
             {step.description}
           </motion.p>
 
-          {/* Bottom Line */}
+          {/* Animated underline */}
           <motion.div
-            className="absolute bottom-0 left-0 right-0 h-1 bg-primary origin-left"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: isHovered ? 1 : 0 }}
+            className="mt-8 h-[2px] bg-primary"
+            initial={{ width: 0 }}
+            animate={{ width: isHovered ? 120 : 60 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           />
         </div>
+      </div>
 
-        {/* Decorative Corner */}
+      {/* Corner Decoration */}
+      <div className="absolute top-8 right-8 flex gap-1">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-primary"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 + i * 0.1 }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+interface StepSelectorProps {
+  step: {
+    id: string;
+    number: string;
+    title: string;
+  };
+  index: number;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+function StepSelector({ step, index, isActive, onClick }: StepSelectorProps) {
+  return (
+    <motion.button
+      className={`group relative w-full p-5 md:p-6 rounded-2xl border text-left transition-colors duration-300 ${
+        isActive 
+          ? "bg-primary/5 border-primary/30" 
+          : "bg-card border-border hover:border-primary/20"
+      }`}
+      onClick={onClick}
+      whileHover={{ x: isActive ? 0 : 8 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {/* Progress indicator */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl bg-primary"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: isActive ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        style={{ originY: 0 }}
+      />
+
+      <div className="flex items-center gap-4">
+        {/* Number */}
+        <span className={`font-mono text-sm transition-colors duration-300 ${
+          isActive ? "text-primary" : "text-muted-foreground"
+        }`}>
+          {step.number}
+        </span>
+
+        {/* Title */}
+        <span className={`font-syne text-base md:text-lg font-semibold transition-colors duration-300 ${
+          isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+        }`}>
+          {step.title}
+        </span>
+
+        {/* Arrow */}
         <motion.div
-          className="absolute -top-20 -right-20 w-40 h-40 rounded-full border border-primary/10"
+          className="ml-auto"
           animate={{ 
-            scale: isHovered ? 1.2 : 1,
-            opacity: isHovered ? 1 : 0.5 
+            x: isActive ? 0 : -4,
+            opacity: isActive ? 1 : 0
           }}
-          transition={{ duration: 0.4 }}
-        />
-      </motion.div>
+          transition={{ duration: 0.3 }}
+        >
+          <ArrowUpRight className="w-4 h-4 text-primary" />
+        </motion.div>
+      </div>
+    </motion.button>
+  );
+}
+
+interface StatItemProps {
+  number: string;
+  label: string;
+  delay: number;
+}
+
+function StatItem({ number, label, delay }: StatItemProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="text-center md:text-left"
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay }}
+    >
+      <motion.span
+        className="block font-syne text-3xl md:text-4xl font-bold text-foreground mb-1"
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.6, delay: delay + 0.2 }}
+      >
+        {number}
+      </motion.span>
+      <span className="text-sm text-muted-foreground">{label}</span>
     </motion.div>
   );
 }
