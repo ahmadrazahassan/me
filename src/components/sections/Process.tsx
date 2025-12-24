@@ -1,236 +1,101 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useInView, useMotionValue, useSpring } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { processSteps } from "@/data/process";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight, Plus, Minus } from "lucide-react";
 
 export function Process() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number>(0);
   const headerRef = useRef<HTMLDivElement>(null);
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" });
 
-  // Auto-rotate through steps
-  useEffect(() => {
-    if (isHovering) return;
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % processSteps.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isHovering]);
+  const toggleStep = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? -1 : index);
+  };
 
   return (
-    <section
-      ref={sectionRef}
-      id="process"
-      className="relative py-28 md:py-40 lg:py-48 bg-background overflow-hidden"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
-      {/* Background Large Number */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={activeIndex}
-            className="font-syne text-[40vw] md:text-[35vw] font-bold text-foreground/[0.02] select-none leading-none"
-            initial={{ opacity: 0, scale: 0.8, y: 100 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 1.1, y: -50 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {processSteps[activeIndex].number}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-
-      <div className="container-wide relative z-10">
-        {/* Compact Header */}
-        <div ref={headerRef} className="mb-20 md:mb-28">
-          <motion.div
-            className="flex items-center gap-3 mb-4"
-            initial={{ opacity: 0 }}
-            animate={isHeaderInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div 
-              className="w-8 h-[1px] bg-primary"
-              initial={{ scaleX: 0 }}
-              animate={isHeaderInView ? { scaleX: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              style={{ originX: 0 }}
-            />
-            <span className="text-xs font-medium tracking-[0.2em] uppercase text-primary">
-              Process
-            </span>
-          </motion.div>
-
-          <div className="overflow-hidden">
-            <motion.h2
-              className="font-syne text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-[-0.02em]"
-              initial={{ y: "100%" }}
-              animate={isHeaderInView ? { y: 0 } : {}}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            >
-              How it works
-            </motion.h2>
-          </div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8">
-          {/* Left - Step Navigation */}
-          <div className="lg:col-span-4">
-            <div className="space-y-2">
-              {processSteps.map((step, index) => (
-                <StepTab
-                  key={step.id}
-                  step={step}
-                  index={index}
-                  isActive={activeIndex === index}
-                  onClick={() => setActiveIndex(index)}
-                />
-              ))}
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mt-8 h-[2px] bg-border rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-primary"
-                initial={{ width: "0%" }}
-                animate={{ width: `${((activeIndex + 1) / processSteps.length) * 100}%` }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              />
-            </div>
-
-            {/* Step Counter */}
-            <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-              <span>Step {activeIndex + 1} of {processSteps.length}</span>
-              <div className="flex gap-1">
-                {processSteps.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveIndex(i)}
-                    className={`w-6 h-1 rounded-full transition-colors duration-300 ${
-                      i === activeIndex ? "bg-primary" : "bg-border hover:bg-primary/50"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right - Content Display */}
-          <div className="lg:col-span-8">
-            <div className="relative min-h-[400px] md:min-h-[450px]">
-              <AnimatePresence mode="wait">
-                <StepContent
-                  key={activeIndex}
-                  step={processSteps[activeIndex]}
-                  index={activeIndex}
-                />
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          className="mt-20 md:mt-28 pt-12 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-6"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="text-muted-foreground text-center sm:text-left">
-            Ready to transform your ideas into reality?
-          </p>
-
-          <motion.a
-            href="#contact"
-            className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground text-background rounded-full font-medium hover:bg-primary transition-colors duration-300"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Start your project
+    <section id="process" className="relative py-28 md:py-40 bg-background overflow-hidden">
+      <div className="container-wide">
+        {/* Header */}
+        <div ref={headerRef} className="grid lg:grid-cols-2 gap-12 lg:gap-20 mb-16 md:mb-24">
+          {/* Left - Title */}
+          <div>
             <motion.div
-              className="w-6 h-6 rounded-full bg-background/20 flex items-center justify-center"
-              whileHover={{ x: 2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5 }}
             >
-              <ArrowRight className="w-3 h-3" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
+                Our Process
+              </span>
             </motion.div>
-          </motion.a>
-        </motion.div>
+
+            <div className="overflow-hidden">
+              <motion.h2
+                className="font-syne text-4xl sm:text-5xl md:text-6xl font-bold text-foreground tracking-[-0.02em] leading-[1.1]"
+                initial={{ y: "100%" }}
+                animate={isHeaderInView ? { y: 0 } : {}}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Four simple steps
+              </motion.h2>
+            </div>
+            <div className="overflow-hidden">
+              <motion.h2
+                className="font-syne text-4xl sm:text-5xl md:text-6xl font-bold text-foreground tracking-[-0.02em] leading-[1.1]"
+                initial={{ y: "100%" }}
+                animate={isHeaderInView ? { y: 0 } : {}}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+              >
+                to <span className="text-primary">success</span>
+              </motion.h2>
+            </div>
+          </div>
+
+          {/* Right - Description + CTA */}
+          <div className="flex flex-col justify-end">
+            <motion.p
+              className="text-muted-foreground text-lg mb-8 max-w-md"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              We follow a proven methodology that ensures every project is delivered with precision, creativity, and measurable results.
+            </motion.p>
+
+            <motion.a
+              href="#contact"
+              className="group inline-flex items-center gap-2 text-foreground font-medium"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              whileHover={{ x: 4 }}
+            >
+              <span className="border-b border-foreground pb-0.5">Start a project</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </motion.a>
+          </div>
+        </div>
+
+        {/* Accordion Steps */}
+        <div className="border-t border-border">
+          {processSteps.map((step, index) => (
+            <AccordionStep
+              key={step.id}
+              step={step}
+              index={index}
+              isExpanded={expandedIndex === index}
+              onToggle={() => toggleStep(index)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-interface StepTabProps {
-  step: {
-    id: string;
-    number: string;
-    title: string;
-  };
-  index: number;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-function StepTab({ step, index, isActive, onClick }: StepTabProps) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-30px" });
-
-  return (
-    <motion.button
-      ref={ref}
-      onClick={onClick}
-      className="group relative w-full text-left"
-      initial={{ opacity: 0, x: -20 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-    >
-      <motion.div
-        className={`relative px-5 py-4 rounded-xl transition-colors duration-300 ${
-          isActive ? "bg-foreground" : "hover:bg-muted/50"
-        }`}
-        whileHover={{ x: isActive ? 0 : 4 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex items-center gap-4">
-          {/* Number */}
-          <span
-            className={`font-mono text-xs transition-colors duration-300 ${
-              isActive ? "text-primary" : "text-muted-foreground"
-            }`}
-          >
-            {step.number}
-          </span>
-
-          {/* Title */}
-          <span
-            className={`font-syne text-base font-semibold transition-colors duration-300 ${
-              isActive ? "text-background" : "text-foreground"
-            }`}
-          >
-            {step.title}
-          </span>
-
-          {/* Arrow */}
-          <motion.div
-            className="ml-auto"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ArrowRight className={`w-4 h-4 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
-          </motion.div>
-        </div>
-      </motion.div>
-    </motion.button>
-  );
-}
-
-interface StepContentProps {
+interface AccordionStepProps {
   step: {
     id: string;
     number: string;
@@ -238,122 +103,138 @@ interface StepContentProps {
     description: string;
   };
   index: number;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
-function StepContent({ step, index }: StepContentProps) {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 150, damping: 20 });
-  const springY = useSpring(mouseY, { stiffness: 150, damping: 20 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) / 20;
-    const y = (e.clientY - rect.top - rect.height / 2) / 20;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
+function AccordionStep({ step, index, isExpanded, onToggle }: AccordionStepProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
     <motion.div
-      className="relative h-full p-8 md:p-12 rounded-3xl bg-muted/30 border border-border overflow-hidden"
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.98 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
+      ref={ref}
+      className="border-b border-border"
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      {/* Floating Elements */}
-      <motion.div
-        className="absolute top-6 right-6 w-20 h-20 rounded-full border border-primary/20"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      />
-      <motion.div
-        className="absolute bottom-12 right-12 w-3 h-3 rounded-full bg-primary"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      />
+      {/* Header - Clickable */}
+      <button
+        onClick={onToggle}
+        className="w-full py-8 md:py-10 flex items-center gap-6 md:gap-12 text-left group"
+      >
+        {/* Number */}
+        <motion.span
+          className="font-mono text-sm text-muted-foreground w-8 shrink-0"
+          animate={{ color: isExpanded ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}
+          transition={{ duration: 0.3 }}
+        >
+          {step.number}
+        </motion.span>
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col">
-        {/* Top - Number & Badge */}
-        <div className="flex items-start justify-between mb-auto">
+        {/* Title */}
+        <motion.h3
+          className="font-syne text-2xl sm:text-3xl md:text-4xl font-bold text-foreground flex-1"
+          animate={{ 
+            x: isExpanded ? 8 : 0,
+            color: isExpanded ? "hsl(var(--primary))" : "hsl(var(--foreground))"
+          }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {step.title}
+        </motion.h3>
+
+        {/* Toggle Icon */}
+        <motion.div
+          className="w-12 h-12 rounded-full border border-border flex items-center justify-center shrink-0"
+          animate={{
+            backgroundColor: isExpanded ? "hsl(var(--primary))" : "transparent",
+            borderColor: isExpanded ? "hsl(var(--primary))" : "hsl(var(--border))"
+          }}
+          transition={{ duration: 0.3 }}
+          whileHover={{ scale: 1.05 }}
+        >
+          <AnimatePresence mode="wait">
+            {isExpanded ? (
+              <motion.div
+                key="minus"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Minus className="w-5 h-5 text-primary-foreground" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="plus"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Plus className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </button>
+
+      {/* Content - Expandable */}
+      <AnimatePresence>
+        {isExpanded && (
           <motion.div
-            className="flex items-center gap-3"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
           >
-            <span className="font-mono text-7xl md:text-8xl font-bold text-primary/20">
-              {step.number}
-            </span>
+            <div className="pb-10 md:pb-12 pl-14 md:pl-20">
+              <div className="grid md:grid-cols-2 gap-8 md:gap-16">
+                {/* Description */}
+                <motion.p
+                  className="text-muted-foreground text-lg leading-relaxed"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                >
+                  {step.description}
+                </motion.p>
+
+                {/* Visual/Stats */}
+                <motion.div
+                  className="flex items-center gap-8"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                >
+                  {/* Decorative Number */}
+                  <span className="font-syne text-8xl md:text-9xl font-bold text-foreground/5">
+                    {step.number}
+                  </span>
+                </motion.div>
+              </div>
+
+              {/* Progress Line */}
+              <motion.div
+                className="mt-8 h-[2px] bg-primary/20 rounded-full overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <motion.div
+                  className="h-full bg-primary"
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+                />
+              </motion.div>
+            </div>
           </motion.div>
-
-          <motion.span
-            className="px-3 py-1.5 text-xs font-medium tracking-wider uppercase bg-primary/10 text-primary rounded-full"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            Phase {index + 1}
-          </motion.span>
-        </div>
-
-        {/* Bottom - Title & Description */}
-        <div className="mt-auto">
-          <motion.h3
-            className="font-syne text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-          >
-            {step.title}
-          </motion.h3>
-
-          <motion.p
-            className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-          >
-            {step.description}
-          </motion.p>
-
-          {/* Animated Line */}
-          <motion.div
-            className="mt-8 flex items-center gap-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.35 }}
-          >
-            <motion.div
-              className="h-[2px] bg-primary rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: 48 }}
-              transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            />
-            <motion.span
-              className="text-xs text-muted-foreground"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
-            >
-              {String(index + 1).padStart(2, "0")} / {String(processSteps.length).padStart(2, "0")}
-            </motion.span>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Corner Decoration */}
-      <div className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full border border-border/50" />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
