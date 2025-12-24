@@ -67,13 +67,13 @@ export function Hero() {
               </span>
             </h1>
 
-            {/* Studio text - positioned to the right under "Ahmed" */}
+            {/* Studio text - positioned to the left under "Ahmed" */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               style={{ y: studioY }}
-              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-2 md:mt-4 text-center md:text-right md:max-w-[60%] md:ml-auto"
+              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-2 md:mt-4 text-center md:text-left md:ml-[5%]"
             >
               Studio
             </motion.p>
