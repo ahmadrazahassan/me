@@ -1,12 +1,15 @@
 import React from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
+  useSmoothScroll();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <a
