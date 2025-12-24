@@ -73,7 +73,7 @@ export function Hero() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               style={{ y: studioY }}
-              className="font-syne font-bold text-background text-4xl md:text-6xl lg:text-7xl mt-6 md:mt-8 ml-4 md:ml-8 lg:ml-12"
+              className="font-syne font-bold text-background text-4xl md:text-6xl lg:text-7xl mt-6 md:mt-8 ml-12 md:ml-24 lg:ml-32"
             >
               Studio
             </motion.p>
