@@ -423,14 +423,14 @@ export function Process() {
             
             {/* Animated Arrow Circle - pointing upper right */}
             <motion.span 
-              className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-foreground/20 group-hover:border-primary transition-colors duration-300"
+              className="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full border border-foreground/20 group-hover:border-primary transition-colors duration-300"
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               {/* Arrow pointing upper right */}
               <svg 
-                width="18" 
-                height="18" 
+                width="12" 
+                height="12" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 className="text-foreground group-hover:text-primary transition-colors duration-300"
