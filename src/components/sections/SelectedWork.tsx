@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { projects } from "@/data/projects";
-import { Eye } from "lucide-react";
+import { Eye, ArrowUpRight } from "lucide-react";
 
-// Eye Cursor Component
+// Custom Eye Cursor for project hover
 function EyeCursor({ isVisible, mouseX, mouseY }: { isVisible: boolean; mouseX: number; mouseY: number }) {
   const x = useSpring(mouseX, { stiffness: 500, damping: 28 });
   const y = useSpring(mouseY, { stiffness: 500, damping: 28 });
@@ -16,7 +16,7 @@ function EyeCursor({ isVisible, mouseX, mouseY }: { isVisible: boolean; mouseX: 
 
   return (
     <motion.div
-      className="fixed pointer-events-none z-50 flex items-center justify-center mix-blend-difference"
+      className="fixed pointer-events-none z-[100] flex items-center justify-center"
       style={{
         x,
         y,
@@ -25,34 +25,233 @@ function EyeCursor({ isVisible, mouseX, mouseY }: { isVisible: boolean; mouseX: 
         translateY: "-50%",
       }}
     >
-      <div className="w-24 h-24 rounded-full bg-background flex items-center justify-center">
-        <Eye className="w-8 h-8 text-foreground" />
-      </div>
+      <motion.div 
+        className="w-20 h-20 rounded-full bg-primary flex items-center justify-center"
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+      >
+        <Eye className="w-6 h-6 text-primary-foreground" />
+      </motion.div>
     </motion.div>
   );
 }
 
-// Animated text reveal
-const titleChars = "Selected Works".split("");
+// Individual Project Card with Sticky Scroll Stack Effect
+function ProjectCard({ 
+  project, 
+  index, 
+  totalProjects,
+  onHover,
+  onLeave,
+}: { 
+  project: typeof projects[0]; 
+  index: number;
+  totalProjects: number;
+  onHover: (e: React.MouseEvent) => void;
+  onLeave: () => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax for image
+  const imageY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
+  
+  // Calculate stack position - cards stack from bottom
+  const stackOffset = (totalProjects - index - 1) * 40;
+  const zIndex = index + 1;
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className="sticky w-full"
+      style={{ 
+        top: `${100 + index * 40}px`,
+        zIndex,
+      }}
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ 
+        duration: 0.8, 
+        delay: index * 0.1,
+        ease: [0.22, 1, 0.36, 1] 
+      }}
+    >
+      <motion.article 
+        className="group relative bg-background rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-border/10"
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {/* Main Layout - Horizontal on desktop */}
+        <div className="flex flex-col lg:flex-row">
+          {/* Image Section */}
+          <div 
+            className="relative w-full lg:w-3/5 aspect-[16/10] lg:aspect-auto lg:min-h-[500px] overflow-hidden cursor-none"
+            onMouseMove={onHover}
+            onMouseEnter={onHover}
+            onMouseLeave={onLeave}
+          >
+            <motion.div
+              className="absolute inset-0"
+              style={{ y: imageY, scale: imageScale }}
+            >
+              <img
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/5 via-transparent to-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            {/* Project number - large */}
+            <motion.div 
+              className="absolute top-6 left-6 md:top-8 md:left-8"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+            >
+              <span className="text-7xl md:text-8xl lg:text-9xl font-bold text-background/10 leading-none select-none">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+            </motion.div>
+
+            {/* Year badge */}
+            <motion.div 
+              className="absolute bottom-6 left-6 md:bottom-8 md:left-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-background/90 backdrop-blur-sm rounded-full text-xs font-mono text-muted-foreground">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                {project.year}
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Content Section */}
+          <div className="w-full lg:w-2/5 p-6 md:p-10 lg:p-12 flex flex-col justify-center">
+            {/* Category */}
+            <motion.span 
+              className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-4"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              {project.tags[0]}
+            </motion.span>
+
+            {/* Title */}
+            <motion.h3 
+              className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight mb-4 leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              {project.title}
+            </motion.h3>
+
+            {/* Description */}
+            <motion.p 
+              className="text-muted-foreground text-sm md:text-base leading-relaxed mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {project.description}
+            </motion.p>
+
+            {/* Tags */}
+            <motion.div 
+              className="flex flex-wrap gap-2 mb-8"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              {project.tags.slice(1).map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/50 rounded-full border border-border/30"
+                >
+                  {tag}
+                </span>
+              ))}
+            </motion.div>
+
+            {/* CTA Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <motion.button
+                className="group/btn inline-flex items-center gap-3 text-foreground font-medium"
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="relative">
+                  View Project
+                  <span className="absolute left-0 -bottom-0.5 w-full h-px bg-foreground/20" />
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-primary group-hover/btn:w-full transition-all duration-300" />
+                </span>
+                <span className="w-8 h-8 rounded-full border border-foreground/20 flex items-center justify-center group-hover/btn:border-primary group-hover/btn:bg-primary transition-all duration-300">
+                  <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:text-primary-foreground transition-colors duration-300" />
+                </span>
+              </motion.button>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Bottom progress line */}
+        <motion.div 
+          className="absolute bottom-0 left-0 h-0.5 bg-primary origin-left"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: 0.5 + index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </motion.article>
+    </motion.div>
+  );
+}
 
 export function SelectedWork() {
   const [cursorVisible, setCursorVisible] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" });
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end end"],
   });
 
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     setMousePos({ x: e.clientX, y: e.clientY });
+    setCursorVisible(true);
   };
+
+  const handleMouseLeave = () => {
+    setCursorVisible(false);
+  };
+
+  // Title animation
+  const titleWords = ["Selected", "Works"];
 
   return (
     <>
@@ -61,264 +260,124 @@ export function SelectedWork() {
       <section 
         ref={sectionRef}
         id="work" 
-        className="py-32 md:py-44 bg-background overflow-hidden relative"
-        onMouseMove={handleMouseMove}
+        className="relative bg-background"
       >
-        {/* Subtle grid pattern */}
-        <motion.div 
-          style={{ y: bgY }}
-          className="absolute inset-0 pointer-events-none opacity-[0.02]"
-        >
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
-                              linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px'
-          }} />
-        </motion.div>
-
-        <div className="container mx-auto px-6 md:px-8 relative z-10">
-          {/* Header */}
-          <div ref={headerRef} className="mb-20 md:mb-32">
-            {/* Eyebrow */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-4 mb-8"
-            >
-              <motion.span 
-                initial={{ scaleX: 0 }}
-                animate={isHeaderInView ? { scaleX: 1 } : {}}
-                transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="w-16 h-px bg-foreground/20 origin-left"
-              />
-              <span className="text-muted-foreground text-sm tracking-[0.3em] uppercase font-medium">
-                Portfolio
-              </span>
-            </motion.div>
-
-            {/* Main title with character animation */}
-            <div className="overflow-hidden mb-6">
-              <motion.h2 
-                className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-foreground tracking-tighter leading-[0.9]"
-              >
-                {titleChars.map((char, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ y: 120, opacity: 0 }}
-                    animate={isHeaderInView ? { y: 0, opacity: 1 } : {}}
-                    transition={{ 
-                      duration: 0.8, 
-                      delay: i * 0.03,
-                      ease: [0.22, 1, 0.36, 1] 
-                    }}
-                    className="inline-block"
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-              </motion.h2>
-            </div>
-
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-muted-foreground text-lg md:text-xl max-w-xl leading-relaxed"
-            >
-              A curated collection of projects that showcase our expertise in design, development, and digital innovation.
-            </motion.p>
-
-            {/* Project count */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isHeaderInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="mt-8 flex items-center gap-2"
-            >
-              <span className="text-6xl md:text-7xl font-bold text-foreground/5">
-                {String(projects.length).padStart(2, '0')}
-              </span>
-              <span className="text-muted-foreground/50 text-sm -ml-2">projects</span>
-            </motion.div>
-          </div>
-
-          {/* Projects Grid - Masonry-like layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
-            {projects.map((project, index) => (
-              <motion.article
-                key={project.id}
-                initial={{ opacity: 0, y: 80 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ 
-                  duration: 0.8, 
-                  delay: index * 0.1,
-                  ease: [0.22, 1, 0.36, 1] 
-                }}
-                className={`group ${index % 3 === 1 ? 'md:mt-24' : ''}`}
-                onMouseEnter={() => {
-                  setHoveredProject(project.id);
-                  setCursorVisible(true);
-                }}
-                onMouseLeave={() => {
-                  setHoveredProject(null);
-                  setCursorVisible(false);
-                }}
-              >
-                {/* Image Container */}
-                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden mb-6 cursor-none">
-                  {/* Image with parallax */}
-                  <motion.div
-                    className="absolute inset-0"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
-
-                  {/* Gradient overlay */}
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: hoveredProject === project.id ? 1 : 0 }}
-                    transition={{ duration: 0.4 }}
-                  />
-
-                  {/* Corner accent */}
-                  <motion.div
-                    className="absolute top-0 left-0 w-16 h-16"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: hoveredProject === project.id ? 1 : 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    <div className="absolute top-4 left-4 w-8 h-px bg-background" />
-                    <div className="absolute top-4 left-4 w-px h-8 bg-background" />
-                  </motion.div>
-
-                  {/* Year badge */}
-                  <motion.div 
-                    className="absolute bottom-4 left-4"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ 
-                      opacity: hoveredProject === project.id ? 1 : 0,
-                      x: hoveredProject === project.id ? 0 : -10 
-                    }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    <span className="text-background/80 text-sm font-mono">
-                      © {project.year}
-                    </span>
-                  </motion.div>
-
-                  {/* Index number */}
-                  <motion.div 
-                    className="absolute bottom-4 right-4"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ 
-                      opacity: hoveredProject === project.id ? 1 : 0,
-                      y: hoveredProject === project.id ? 0 : 10 
-                    }}
-                    transition={{ duration: 0.3, delay: 0.15 }}
-                  >
-                    <span className="text-background/40 text-5xl font-bold">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                  </motion.div>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-4">
-                  {/* Title with animated underline */}
-                  <div className="relative inline-block">
-                    <motion.h3 
-                      className="font-bold text-2xl md:text-3xl text-foreground tracking-tight"
-                      whileHover={{ x: 10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {project.title}
-                    </motion.h3>
-                    <motion.span 
-                      className="absolute -bottom-1 left-0 h-0.5 bg-primary"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: hoveredProject === project.id ? 1 : 0 }}
-                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ width: "100%", originX: 0 }}
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-muted-foreground text-sm md:text-base leading-relaxed max-w-md">
-                    {project.description}
-                  </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {project.tags.map((tag, tagIndex) => (
-                      <motion.span
-                        key={tag}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, delay: 0.3 + tagIndex * 0.05 }}
-                        className="px-3 py-1 text-xs font-medium text-muted-foreground border border-border/50 rounded-full hover:border-primary/50 hover:text-primary transition-colors duration-300"
-                      >
-                        {tag}
-                      </motion.span>
-                    ))}
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-
-          {/* Bottom CTA */}
+        {/* Fixed progress indicator */}
+        <div className="fixed top-0 left-0 right-0 h-0.5 bg-border/20 z-50">
           <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex justify-center mt-24 md:mt-32"
-          >
-            <motion.a
-              href="#contact"
-              className="group relative inline-flex items-center gap-4 cursor-pointer"
-              whileHover={{ x: 5 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            >
-              <span className="relative text-lg md:text-xl text-foreground font-medium">
-                View all projects
-                <span className="absolute left-0 -bottom-1 w-full h-px bg-foreground/20" />
-                <span className="absolute left-0 -bottom-1 w-full h-px bg-primary scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-              </span>
-              
-              <motion.span 
-                className="flex items-center justify-center w-10 h-10 rounded-full border border-foreground/20 group-hover:border-primary transition-colors duration-300"
-                whileHover={{ scale: 1.1 }}
+            className="h-full bg-primary"
+            style={{ width: progressWidth }}
+          />
+        </div>
+
+        {/* Header Section */}
+        <div className="sticky top-0 z-10 bg-background pt-24 md:pt-32 pb-12 md:pb-20">
+          <div className="container mx-auto px-6 md:px-8">
+            <div ref={headerRef} className="max-w-4xl">
+              {/* Eyebrow */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="flex items-center gap-4 mb-6"
               >
-                <svg 
-                  width="14" 
-                  height="14" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  className="text-foreground group-hover:text-primary transition-colors duration-300"
-                >
-                  <path 
-                    d="M7 17L17 7M7 7h10v10" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </motion.span>
-            </motion.a>
-          </motion.div>
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-muted-foreground text-sm tracking-[0.3em] uppercase font-medium">
+                  Featured Work
+                </span>
+                <span className="text-muted-foreground/40 text-sm">
+                  ({String(projects.length).padStart(2, '0')})
+                </span>
+              </motion.div>
+
+              {/* Main Title */}
+              <div className="overflow-hidden mb-6">
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                  {titleWords.map((word, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ y: 100, opacity: 0 }}
+                      whileInView={{ y: 0, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ 
+                        duration: 0.8, 
+                        delay: i * 0.15,
+                        ease: [0.22, 1, 0.36, 1] 
+                      }}
+                      className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tighter leading-none"
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-muted-foreground text-lg md:text-xl max-w-xl leading-relaxed"
+              >
+                Explore our curated collection of award-winning digital experiences
+              </motion.p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stacked Projects Container */}
+        <div className="relative pb-[100vh]">
+          <div className="container mx-auto px-6 md:px-8">
+            <div className="space-y-8 md:space-y-12">
+              {projects.map((project, index) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  totalProjects={projects.length}
+                  onHover={handleMouseMove}
+                  onLeave={handleMouseLeave}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="sticky bottom-0 z-20 bg-gradient-to-t from-background via-background to-transparent pt-20 pb-12">
+          <div className="container mx-auto px-6 md:px-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 md:p-12 bg-muted/30 backdrop-blur-sm rounded-2xl border border-border/20"
+            >
+              <div>
+                <h4 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                  Have a project in mind?
+                </h4>
+                <p className="text-muted-foreground text-sm md:text-base">
+                  Let's work together to bring your vision to life
+                </p>
+              </div>
+              
+              <motion.a
+                href="#contact"
+                className="group inline-flex items-center gap-4 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span>Start a Project</span>
+                <span className="w-6 h-6 rounded-full bg-primary-foreground/20 flex items-center justify-center group-hover:bg-primary-foreground/30 transition-colors">
+                  <ArrowUpRight className="w-3 h-3" />
+                </span>
+              </motion.a>
+            </motion.div>
+          </div>
         </div>
       </section>
     </>
