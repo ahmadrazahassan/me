@@ -5,26 +5,62 @@ import { projects } from "@/data/projects";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Tag } from "@/components/ui/Tag";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const headerVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export function SelectedWork() {
   return (
     <section id="work" className="section-padding bg-muted/30">
-      <div className="container-wide">
-        <SectionHeader
-          eyebrow="Selected work"
-          title="Projects that define our craft"
-          subtitle="A curated selection of our most impactful work across branding, web design, and digital experiences."
-          className="mb-12 md:mb-16"
-        />
+      <motion.div
+        className="container-wide"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+      >
+        <motion.div variants={headerVariants}>
+          <SectionHeader
+            eyebrow="Selected work"
+            title="Projects that define our craft"
+            subtitle="A curated selection of our most impactful work across branding, web design, and digital experiences."
+            className="mb-12 md:mb-16"
+          />
+        </motion.div>
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.article
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={cardVariants}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
               className="group cursor-pointer"
             >
               <div className="relative aspect-[4/5] rounded-3xl overflow-hidden mb-4">
@@ -36,16 +72,12 @@ export function SelectedWork() {
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 {/* Hover overlay */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileHover={{ opacity: 1, y: 0 }}
-                  className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                >
+                <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
                   <span className="inline-flex items-center gap-2 text-background text-sm font-medium">
                     View case study
                     <ArrowUpRight className="h-4 w-4" />
                   </span>
-                </motion.div>
+                </div>
 
                 {/* Year badge */}
                 <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium">
@@ -71,7 +103,7 @@ export function SelectedWork() {
             </motion.article>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

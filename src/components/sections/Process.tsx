@@ -4,41 +4,67 @@ import { processSteps } from "@/data/process";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { PillButton } from "@/components/ui/PillButton";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const leftVariants = {
+  hidden: { opacity: 0, x: -40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
+const stepVariants = {
+  hidden: { opacity: 0, x: 40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export function Process() {
   return (
     <section id="process" className="section-padding bg-muted/30">
-      <div className="container-wide">
+      <motion.div
+        className="container-wide"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+      >
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Left Column - Header */}
-          <div className="space-y-6">
+          <motion.div className="space-y-6" variants={leftVariants}>
             <SectionHeader
               eyebrow="Our process"
               title="We believe in a streamlined, collaborative approach"
               subtitle="Our proven methodology brings your vision to life efficiently and effectively, ensuring exceptional results at every stage."
             />
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="pt-4"
-            >
+            <motion.div className="pt-4" variants={leftVariants}>
               <PillButton href="#contact" showArrow>
                 Let's get started
               </PillButton>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Right Column - Process Steps */}
           <div className="space-y-4">
-            {processSteps.map((step, index) => (
+            {processSteps.map((step) => (
               <motion.div
                 key={step.id}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                variants={stepVariants}
                 whileHover={{ x: 8, transition: { duration: 0.2 } }}
                 className="group bg-card rounded-2xl p-6 border border-border hover:border-primary/30 transition-all cursor-default"
               >
@@ -59,7 +85,7 @@ export function Process() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
