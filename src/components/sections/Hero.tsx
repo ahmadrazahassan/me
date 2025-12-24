@@ -128,37 +128,62 @@ export function Hero() {
 
           {/* Right - Team Lead Card */}
           <div className="md:col-span-1 flex justify-end">
-            <div className="bg-background rounded-2xl p-3 flex items-center gap-3 shadow-2xl max-w-xs">
-              <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80"
-                alt="Team Lead"
-                className="w-16 h-20 object-cover rounded-xl"
-              />
-              <div className="flex-1">
-                <p className="text-muted-foreground text-xs">Team Lead</p>
-                <p className="text-muted-foreground/60 text-[10px]">at Ahmed Inc.®</p>
-                <p className="font-syne font-bold text-foreground text-sm mt-0.5">
+            <motion.div 
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 1, duration: 0.5, ease: "easeOut" }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="group relative bg-background/95 backdrop-blur-xl rounded-2xl p-4 flex items-center gap-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.16)] transition-shadow duration-300 max-w-xs border border-border/10"
+            >
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-background via-background to-muted/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Image with hover effect */}
+              <div className="relative overflow-hidden rounded-xl">
+                <motion.img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80"
+                  alt="Lauren Thompson - Team Lead"
+                  className="w-16 h-20 object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
+                />
+                {/* Image overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+              </div>
+
+              {/* Content */}
+              <div className="relative flex-1 min-w-0">
+                <p className="text-muted-foreground text-xs font-medium tracking-wide">Team Lead</p>
+                <p className="text-muted-foreground/50 text-[10px] mt-0.5">at Ahmed Inc.<sup className="text-[8px]">®</sup></p>
+                <p className="font-syne font-bold text-foreground text-sm mt-1 truncate">
                   Lauren Thompson
                 </p>
-                <div className="flex items-center gap-2 mt-2">
+                
+                {/* Action buttons */}
+                <div className="flex items-center gap-2 mt-3">
                   <MagneticButton
                     as="a"
                     href="#contact"
-                    className="bg-foreground text-background text-xs px-3 py-1.5 rounded-full hover:bg-foreground/90 transition-colors inline-block"
-                    strength={0.4}
+                    className="relative overflow-hidden bg-foreground text-background text-xs font-medium px-4 py-2 rounded-full hover:bg-foreground/90 transition-all duration-300 inline-flex items-center gap-1.5 group/btn"
+                    strength={0.3}
                   >
-                    Let's talk
+                    <span className="relative z-10">Let's talk</span>
+                    <motion.span
+                      className="inline-block"
+                      initial={{ x: 0 }}
+                      whileHover={{ x: 2 }}
+                    >
+                      →
+                    </motion.span>
                   </MagneticButton>
                   <MagneticButton
                     as="button"
-                    className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
-                    strength={0.4}
+                    className="w-8 h-8 rounded-full border border-border/50 flex items-center justify-center hover:bg-muted hover:border-border transition-all duration-300 group/plus"
+                    strength={0.3}
                   >
-                    <Plus className="h-3 w-3 text-foreground" />
+                    <Plus className="h-3.5 w-3.5 text-foreground/70 group-hover/plus:text-foreground group-hover/plus:rotate-90 transition-all duration-300" />
                   </MagneticButton>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
