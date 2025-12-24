@@ -58,45 +58,46 @@ export function Hero() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative w-full"
           >
-            {/* Main brand name - reduced size */}
-            <h1 className="font-syne font-bold text-background leading-[0.85] tracking-tighter">
-              <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block">
-                Ahmed
-              </span>
-              <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block -mt-[2vw]">
-                Inc.
-              </span>
-            </h1>
+            {/* Main brand name with modern layout */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+              <h1 className="font-syne font-bold text-background leading-[0.85] tracking-[-0.04em]">
+                <span className="text-[18vw] md:text-[16vw] lg:text-[14vw] block">
+                  Ahm
+                </span>
+                <span className="text-[8vw] md:text-[7vw] lg:text-[6vw] block mt-2 ml-1 font-light tracking-tight text-background/70">
+                  ed
+                </span>
+              </h1>
 
-            {/* Studio text */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              style={{ y: studioY }}
-              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-4 md:mt-6 text-center md:text-left md:ml-[25%]"
-            >
-              Studio
-            </motion.p>
-          </motion.div>
-
-          {/* Services list - fixed positioning */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-3 text-right"
-          >
-            {services.map((service, index) => (
-              <span
-                key={index}
-                className="text-background/80 text-sm whitespace-nowrap"
+              {/* Studio text - positioned on the right */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 }}
+                style={{ y: studioY }}
+                className="lg:pb-4"
               >
-                {service}
-              </span>
-            ))}
+                <p className="font-syne font-bold text-background text-4xl md:text-5xl lg:text-7xl tracking-tight">
+                  Studio
+                </p>
+                {/* Services list */}
+                <div className="mt-6 space-y-2">
+                  {services.map((service, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.7 + index * 0.1 }}
+                      className="text-background/60 text-sm block"
+                    >
+                      {service}
+                    </motion.span>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         </motion.div>
 
