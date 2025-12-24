@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
-import { motion, useInView, useSpring, useTransform } from "framer-motion";
-import { Plus, Circle } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { Plus } from "lucide-react";
 
-// Animated number counter
+// Smooth animated number counter
 function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -11,20 +11,26 @@ function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string
   useEffect(() => {
     if (isInView) {
       let start = 0;
-      const duration = 2000;
-      const increment = value / (duration / 16);
+      const duration = 1500;
+      const startTime = Date.now();
       
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= value) {
-          setDisplayValue(value);
-          clearInterval(timer);
+      const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = easeOutQuart(progress);
+        
+        setDisplayValue(Math.floor(easedProgress * value));
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
         } else {
-          setDisplayValue(Math.floor(start));
+          setDisplayValue(value);
         }
-      }, 16);
-
-      return () => clearInterval(timer);
+      };
+      
+      requestAnimationFrame(animate);
     }
   }, [isInView, value]);
 
@@ -35,20 +41,23 @@ function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string
   );
 }
 
-// Text reveal animation
-function RevealText({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+// Smooth text reveal with mask
+function TextReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
-    <span className="inline-block overflow-hidden">
-      <motion.span
-        className="inline-block"
+    <div className="overflow-hidden">
+      <motion.div
         initial={{ y: "100%" }}
         whileInView={{ y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay, ease: [0.6, 0.01, 0, 0.9] }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ 
+          duration: 1,
+          delay, 
+          ease: [0.22, 1, 0.36, 1]
+        }}
       >
         {children}
-      </motion.span>
-    </span>
+      </motion.div>
+    </div>
   );
 }
 
@@ -57,27 +66,22 @@ const stats = [
   {
     number: 50,
     suffix: "+",
-    label: "Successful projects",
-    sublabel: "completed",
+    title: "Successful projects",
+    subtitle: "completed",
     description: "We've delivered 50+ projects that help companies generate real results.",
     index: "01"
   },
   {
     number: 95,
     suffix: "%",
-    label: "Customer",
-    sublabel: "satisfaction rate",
-    description: "Our clients love working with us, and the numbers prove it.",
+    title: "Customer",
+    subtitle: "satisfaction rate",
+    showBrands: true,
     index: "02"
   }
 ];
 
-// Trusted brands
-const brands = [
-  { name: "Vercel", icon: "▲" },
-  { name: "Stripe", icon: "◆" },
-  { name: "Linear", icon: "◯" },
-];
+const brands = ["Vercel", "Stripe", "Linear"];
 
 export function Benefits() {
   const sectionRef = useRef(null);
@@ -86,203 +90,194 @@ export function Benefits() {
   return (
     <section 
       ref={sectionRef}
-      className="py-24 md:py-32 lg:py-40 bg-background overflow-hidden"
+      className="py-32 md:py-40 lg:py-48 bg-background"
     >
       <div className="container-wide">
-        {/* Header */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16 md:mb-24">
-          {/* Left - Eyebrow */}
+        {/* Header Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 mb-20 md:mb-28">
+          {/* Eyebrow - Left */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="flex items-start"
+            className="lg:col-span-3"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.1 }}
           >
-            <div className="inline-flex items-center gap-2">
-              <motion.div
-                className="w-5 h-5 rounded-full border border-foreground/20 flex items-center justify-center"
-                whileHover={{ scale: 1.1 }}
-              >
+            <div className="inline-flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full border border-border flex items-center justify-center">
                 <Plus className="w-3 h-3 text-foreground" />
-              </motion.div>
-              <span className="text-sm font-medium text-foreground">Why choose us</span>
+              </div>
+              <span className="text-sm text-foreground tracking-wide">Why choose us</span>
             </div>
           </motion.div>
 
-          {/* Right - Main Heading */}
-          <div>
-            <h2 className="font-syne text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight">
-              <RevealText>Proven results for every project,</RevealText>
-              <br />
-              <span className="text-muted-foreground">
-                <RevealText delay={0.1}>with a focus on design and</RevealText>
-                <br />
-                <RevealText delay={0.2}>functionality.</RevealText>
-              </span>
+          {/* Heading - Right */}
+          <div className="lg:col-span-9">
+            <h2 className="font-syne font-bold text-[clamp(2.5rem,5vw,4rem)] leading-[1.05] tracking-[-0.02em]">
+              <TextReveal>
+                <span className="text-foreground">Proven results for every project,</span>
+              </TextReveal>
+              <TextReveal delay={0.08}>
+                <span className="text-muted-foreground/60">with a focus on design and</span>
+              </TextReveal>
+              <TextReveal delay={0.16}>
+                <span className="text-muted-foreground/60">functionality.</span>
+              </TextReveal>
             </h2>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Left - Portrait Image */}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          {/* Portrait Image */}
           <motion.div
             className="lg:col-span-5"
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 60 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative">
-              <motion.div
-                className="relative overflow-hidden rounded-2xl md:rounded-3xl aspect-[3/4] md:aspect-[4/5]"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.4 }}
-              >
-                <img
+              <div className="overflow-hidden rounded-2xl">
+                <motion.img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80"
                   alt="Professional portrait"
-                  className="w-full h-full object-cover"
+                  className="w-full aspect-[3/4] object-cover"
+                  initial={{ scale: 1.1 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 />
-                {/* Subtle overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent" />
-              </motion.div>
+              </div>
               
-              {/* Floating badge */}
-              <motion.div
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-foreground flex items-center justify-center"
-                initial={{ scale: 0 }}
-                animate={isInView ? { scale: 1 } : {}}
-                transition={{ duration: 0.5, delay: 0.6, type: "spring" }}
-                whileHover={{ scale: 1.1, rotate: 90 }}
+              {/* Corner badge */}
+              <motion.button
+                className="absolute top-5 right-5 w-9 h-9 rounded-full bg-foreground flex items-center justify-center"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={isInView ? { scale: 1, rotate: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Plus className="w-4 h-4 text-background" />
-              </motion.div>
+              </motion.button>
             </div>
           </motion.div>
 
-          {/* Right - Content */}
-          <div className="lg:col-span-7 flex flex-col">
-            {/* Description */}
-            <motion.div
-              className="mb-8 md:mb-12"
-              initial={{ opacity: 0, y: 20 }}
+          {/* Right Content */}
+          <div className="lg:col-span-7 flex flex-col gap-10">
+            {/* Description Text */}
+            <motion.p
+              className="text-lg md:text-xl lg:text-2xl leading-relaxed tracking-[-0.01em]"
+              initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p className="text-lg md:text-xl leading-relaxed max-w-xl">
-                <span className="text-foreground font-semibold">No fluff, just results.</span>{" "}
-                <span className="text-muted-foreground">
-                  Thoughtful design and tools that make your work easier. We focus on smart design and useful features, project after project.
-                </span>
-              </p>
-            </motion.div>
+              <span className="text-foreground font-medium">No fluff, just results.</span>{" "}
+              <span className="text-muted-foreground">
+                Thoughtful design and tools that make your work easier. We focus on smart design and useful features, project after project.
+              </span>
+            </motion.p>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {stats.map((stat, index) => (
                 <motion.div
                   key={stat.index}
-                  className="group relative"
-                  initial={{ opacity: 0, y: 30 }}
+                  className="group"
+                  initial={{ opacity: 0, y: 40 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
+                  transition={{ 
+                    duration: 0.8, 
+                    delay: 0.5 + index * 0.12,
+                    ease: [0.22, 1, 0.36, 1]
+                  }}
                 >
                   <motion.div
-                    className="relative h-full p-6 md:p-8 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden"
-                    whileHover={{ y: -4, borderColor: "hsl(var(--border))" }}
-                    transition={{ duration: 0.3 }}
+                    className="h-full p-7 md:p-8 rounded-xl border border-border bg-background transition-colors duration-300 hover:bg-muted/30"
+                    whileHover={{ y: -6 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                   >
-                    {/* Index number */}
-                    <span className="absolute top-6 right-6 text-xs text-muted-foreground/50 font-medium">
-                      {stat.index}
-                    </span>
-
-                    {/* Number */}
-                    <div className="mb-4">
-                      <span className="font-syne text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+                    {/* Index */}
+                    <div className="flex justify-between items-start mb-6">
+                      <motion.span 
+                        className="font-syne text-5xl md:text-6xl font-bold text-foreground"
+                        initial={{ opacity: 0 }}
+                        animate={isInView ? { opacity: 1 } : {}}
+                        transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
+                      >
                         <AnimatedNumber value={stat.number} suffix={stat.suffix} />
+                      </motion.span>
+                      <span className="text-xs text-muted-foreground/40 font-medium mt-2">
+                        {stat.index}
                       </span>
                     </div>
 
                     {/* Divider */}
                     <motion.div
-                      className="w-full h-px bg-border/50 mb-4"
+                      className="w-full h-px bg-border mb-5"
                       initial={{ scaleX: 0 }}
                       animate={isInView ? { scaleX: 1 } : {}}
-                      transition={{ duration: 0.8, delay: 0.7 + index * 0.1 }}
+                      transition={{ duration: 1, delay: 0.8 + index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                       style={{ originX: 0 }}
                     />
 
-                    {/* Label */}
-                    <div className="mb-6">
-                      <p className="text-sm md:text-base text-foreground font-medium">{stat.label}</p>
-                      <p className="text-sm md:text-base text-muted-foreground">{stat.sublabel}</p>
+                    {/* Title */}
+                    <div className="mb-8">
+                      <p className="text-base text-foreground font-medium">{stat.title}</p>
+                      <p className="text-base text-muted-foreground">{stat.subtitle}</p>
                     </div>
 
-                    {/* Description (shown on first card) */}
-                    {index === 0 && (
-                      <motion.p
-                        className="text-sm text-muted-foreground leading-relaxed"
-                        initial={{ opacity: 0 }}
-                        animate={isInView ? { opacity: 1 } : {}}
-                        transition={{ duration: 0.6, delay: 0.9 }}
-                      >
-                        {stat.description}
-                      </motion.p>
-                    )}
-
-                    {/* Brands (shown on second card) */}
-                    {index === 1 && (
-                      <motion.div
-                        className="flex items-center gap-4 mt-auto pt-4"
-                        initial={{ opacity: 0 }}
-                        animate={isInView ? { opacity: 1 } : {}}
-                        transition={{ duration: 0.6, delay: 0.9 }}
-                      >
-                        {brands.map((brand, i) => (
-                          <motion.div
-                            key={brand.name}
-                            className="flex items-center gap-1.5 text-muted-foreground/60 hover:text-muted-foreground transition-colors"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={isInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.4, delay: 1 + i * 0.1 }}
-                          >
-                            <span className="text-sm">{brand.icon}</span>
-                            <span className="text-xs font-medium">{brand.name}</span>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-                    )}
-
-                    {/* Hover gradient effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    {/* Bottom content */}
+                    <div className="min-h-[60px]">
+                      {stat.description && (
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {stat.description}
+                        </p>
+                      )}
+                      
+                      {stat.showBrands && (
+                        <div className="flex items-center gap-5">
+                          {brands.map((brand, i) => (
+                            <motion.span
+                              key={brand}
+                              className="text-xs text-muted-foreground/50 font-medium tracking-wide uppercase"
+                              initial={{ opacity: 0 }}
+                              animate={isInView ? { opacity: 1 } : {}}
+                              transition={{ duration: 0.5, delay: 1.1 + i * 0.1 }}
+                            >
+                              {brand}
+                            </motion.span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Additional Stats Row */}
+            {/* Bottom Stats Strip */}
             <motion.div
-              className="grid grid-cols-3 gap-4 md:gap-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.8 }}
+              className="flex items-center gap-8 md:gap-12 pt-4"
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.9 }}
             >
               {[
-                { value: 15, suffix: "+", label: "Years" },
-                { value: 100, suffix: "%", label: "Dedication" },
-                { value: 24, suffix: "/7", label: "Support" },
+                { value: "15+", label: "Years Experience" },
+                { value: "100%", label: "Dedication" },
+                { value: "24/7", label: "Support" },
               ].map((item, index) => (
                 <motion.div
                   key={item.label}
-                  className="text-center p-4 rounded-xl border border-border/30 bg-muted/20"
-                  whileHover={{ y: -2, backgroundColor: "hsl(var(--muted) / 0.4)" }}
-                  transition={{ duration: 0.2 }}
+                  className="flex flex-col"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 1 + index * 0.1 }}
                 >
-                  <div className="font-syne text-2xl md:text-3xl font-bold text-foreground mb-1">
-                    <AnimatedNumber value={item.value} suffix={item.suffix} />
-                  </div>
-                  <p className="text-xs md:text-sm text-muted-foreground">{item.label}</p>
+                  <span className="font-syne text-2xl md:text-3xl font-bold text-foreground">
+                    {item.value}
+                  </span>
+                  <span className="text-sm text-muted-foreground mt-1">{item.label}</span>
                 </motion.div>
               ))}
             </motion.div>
