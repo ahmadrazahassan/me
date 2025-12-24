@@ -1,175 +1,207 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { processSteps } from "@/data/process";
+import { cn } from "@/lib/utils";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
 
 export function Process() {
+  const [activeStep, setActiveStep] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const lineWidth = useTransform(scrollYProgress, [0.1, 0.5], ["0%", "100%"]);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
     <section 
-      ref={sectionRef} 
+      ref={sectionRef}
       id="process" 
-      className="py-32 md:py-44 bg-background"
+      className="section-padding bg-background overflow-hidden"
     >
-      <div className="container mx-auto px-6 md:px-8 lg:px-12">
-        
+      <motion.div
+        className="container-wide"
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
+        variants={containerVariants}
+      >
         {/* Header */}
-        <div className="max-w-3xl mb-20 md:mb-28">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-sm font-medium tracking-[0.2em] uppercase text-muted-foreground mb-6"
-          >
-            How we work
-          </motion.p>
-          
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-foreground leading-[1.1]"
-          >
-            A process built for{" "}
-            <span className="text-muted-foreground">results</span>
-          </motion.h2>
-        </div>
-
-        {/* Progress Line */}
-        <div className="hidden md:block relative h-px bg-border/50 mb-16">
-          <motion.div 
-            style={{ width: lineWidth }}
-            className="absolute top-0 left-0 h-full bg-foreground"
-          />
-        </div>
-
-        {/* Process Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-12">
-          {processSteps.map((step, index) => (
-            <ProcessCard 
-              key={step.id} 
-              step={step} 
-              index={index}
-            />
-          ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-24 md:mt-32 pt-16 border-t border-border/50"
-        >
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div className="max-w-xl">
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Ready to start your project? Let's create something extraordinary together.
-              </p>
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-16 md:mb-24">
+          <motion.div variants={itemVariants}>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+              <span className="inline-block w-2 h-2 rounded-full bg-primary" />
+              <span className="uppercase tracking-[0.15em]">Our Process</span>
             </div>
-            <motion.a
-              href="#contact"
-              className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-full font-medium text-sm tracking-wide hover:bg-foreground/90 transition-colors"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Start a Project
-              <svg 
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </motion.a>
+            <h2 className="heading-lg text-foreground">
+              How we bring your{" "}
+              <span className="text-primary">vision</span> to life
+            </h2>
+          </motion.div>
+
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col justify-end"
+          >
+            <p className="text-muted-foreground leading-relaxed max-w-md lg:ml-auto">
+              We follow a proven methodology that ensures every project is delivered with precision, creativity, and measurable results.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Process Steps */}
+        <motion.div variants={itemVariants}>
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+            
+            {/* Step Tabs - Left */}
+            <div className="lg:col-span-5 space-y-3">
+              {processSteps.map((step, index) => (
+                <motion.button
+                  key={step.id}
+                  onClick={() => setActiveStep(index)}
+                  whileHover={{ x: 4 }}
+                  className={cn(
+                    "w-full text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group",
+                    activeStep === index
+                      ? "bg-foreground text-background"
+                      : "bg-muted/50 text-foreground/70 hover:bg-muted"
+                  )}
+                >
+                  <span className={cn(
+                    "text-sm font-mono transition-colors",
+                    activeStep === index ? "text-primary" : "text-muted-foreground"
+                  )}>
+                    {step.number}
+                  </span>
+                  <span className="font-syne font-semibold text-lg">
+                    {step.title}
+                  </span>
+                  
+                  {/* Arrow indicator */}
+                  <motion.svg
+                    className={cn(
+                      "w-5 h-5 ml-auto transition-colors",
+                      activeStep === index ? "text-primary" : "text-transparent group-hover:text-muted-foreground"
+                    )}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </motion.svg>
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Step Content - Right */}
+            <div className="lg:col-span-7">
+              <div className="bg-foreground rounded-3xl p-8 md:p-12 min-h-[400px] flex flex-col">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeStep}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4, ease: [0.6, 0.01, 0, 0.9] }}
+                    className="flex-1 flex flex-col"
+                  >
+                    {/* Step number - large */}
+                    <span className="font-syne text-[8rem] md:text-[10rem] font-bold text-background/[0.06] leading-none tracking-tighter select-none">
+                      {processSteps[activeStep].number}
+                    </span>
+
+                    {/* Content overlay */}
+                    <div className="mt-auto space-y-6">
+                      <div className="flex items-center gap-3">
+                        <motion.div 
+                          className="w-2 h-2 rounded-full bg-primary"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.2 }}
+                        />
+                        <span className="text-sm text-background/60 uppercase tracking-[0.15em]">
+                          Step {processSteps[activeStep].number}
+                        </span>
+                      </div>
+
+                      <h3 className="font-syne text-3xl md:text-4xl font-bold text-background leading-tight">
+                        {processSteps[activeStep].title}
+                      </h3>
+
+                      <p className="text-background/70 text-lg leading-relaxed max-w-lg">
+                        {processSteps[activeStep].description}
+                      </p>
+
+                      {/* Progress indicator */}
+                      <div className="pt-4 space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-background/60">Progress</span>
+                          <span className="text-background font-medium">
+                            {activeStep + 1} of {processSteps.length}
+                          </span>
+                        </div>
+                        <div className="h-1 bg-background/10 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${((activeStep + 1) / processSteps.length) * 100}%` }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="h-full bg-primary rounded-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+
           </div>
         </motion.div>
 
-      </div>
-    </section>
-  );
-}
-
-interface ProcessCardProps {
-  step: {
-    id: string;
-    number: string;
-    title: string;
-    description: string;
-  };
-  index: number;
-}
-
-function ProcessCard({ step, index }: ProcessCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.7, 
-        delay: index * 0.1,
-        ease: [0.25, 0.1, 0.25, 1]
-      }}
-      className="group relative"
-    >
-      {/* Step Number */}
-      <div className="mb-8">
-        <motion.span 
-          className="inline-block text-7xl md:text-8xl lg:text-9xl font-light text-foreground/[0.08] leading-none tracking-tighter"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.3 }}
+        {/* Bottom Stats */}
+        <motion.div 
+          variants={itemVariants}
+          className="mt-16 md:mt-24 pt-12 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-8"
         >
-          {step.number}
-        </motion.span>
-      </div>
-
-      {/* Content */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <motion.div 
-            className="w-2 h-2 rounded-full bg-foreground"
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 + 0.3, duration: 0.3 }}
-          />
-          <span className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
-            Step {step.number}
-          </span>
-        </div>
-
-        <h3 className="text-xl md:text-2xl font-medium text-foreground tracking-tight leading-tight">
-          {step.title}
-        </h3>
-        
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-          {step.description}
-        </p>
-      </div>
-
-      {/* Hover Line */}
-      <motion.div 
-        className="absolute -bottom-6 left-0 h-px bg-foreground origin-left"
-        initial={{ scaleX: 0 }}
-        whileHover={{ scaleX: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        style={{ width: "100%" }}
-      />
-    </motion.div>
+          {[
+            { value: "150+", label: "Projects Delivered" },
+            { value: "98%", label: "Client Satisfaction" },
+            { value: "4.9", label: "Average Rating" },
+            { value: "24h", label: "Response Time" },
+          ].map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              className="text-center md:text-left"
+            >
+              <span className="font-syne text-3xl md:text-4xl font-bold text-foreground">
+                {stat.value}
+              </span>
+              <p className="text-sm text-muted-foreground mt-1">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
   );
 }
 
