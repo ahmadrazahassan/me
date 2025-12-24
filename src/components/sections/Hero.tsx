@@ -65,18 +65,15 @@ export function Hero() {
               <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block">
                 Ahmed
               </span>
-              <span className="text-[12vw] md:text-[14vw] lg:text-[15vw] block -mt-[2vw]">
-                Inc.
-              </span>
             </h1>
 
-            {/* Studio text */}
+            {/* Studio text - positioned to the right under "Ahmed" */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               style={{ y: studioY }}
-              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-4 md:mt-6 text-center md:text-left md:ml-[25%]"
+              className="font-syne font-bold text-background text-3xl md:text-5xl lg:text-6xl mt-2 md:mt-4 text-center md:text-right md:max-w-[60%] md:ml-auto"
             >
               Studio
             </motion.p>
