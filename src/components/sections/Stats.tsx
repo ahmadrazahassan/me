@@ -1,92 +1,142 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { stats } from "@/data/stats";
-import { PillButton } from "@/components/ui/PillButton";
+import React, { useRef, useEffect, useState } from "react";
+import { motion, useInView } from "framer-motion";
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
+// Smooth animated number counter
+function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [displayValue, setDisplayValue] = useState(0);
 
-const statVariants = {
-  hidden: { opacity: 0, y: 40, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  },
-};
+  useEffect(() => {
+    if (isInView) {
+      const duration = 2000;
+      const startTime = Date.now();
+      
+      const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = easeOutQuart(progress);
+        
+        setDisplayValue(Math.floor(easedProgress * value));
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setDisplayValue(value);
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    }
+  }, [isInView, value]);
 
-const imageVariants = {
-  hidden: { opacity: 0, scale: 0.9, x: 40 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  return (
+    <span ref={ref} className="tabular-nums">
+      {displayValue}
+      <span className="text-primary">{suffix}</span>
+    </span>
+  );
+}
+
+// Stats data
+const statsData = [
+  {
+    value: 300,
+    suffix: "+",
+    line1: "Successful projects",
+    line2: "completed"
   },
-};
+  {
+    value: 10,
+    suffix: "+",
+    line1: "Years of experience",
+    line2: "in creative industry"
+  },
+  {
+    value: 99,
+    suffix: "%",
+    line1: "Customer",
+    line2: "satisfaction rate"
+  },
+  {
+    value: 25,
+    suffix: "M",
+    line1: "In Client revenue",
+    line2: "growth"
+  }
+];
 
 export function Stats() {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+
   return (
-    <section className="section-padding bg-background">
-      <motion.div
-        className="container-wide"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={containerVariants}
-      >
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 md:gap-6">
-            {stats.map((stat) => (
+    <section 
+      ref={sectionRef}
+      className="py-20 md:py-28 lg:py-32 bg-foreground overflow-hidden"
+    >
+      <div className="container-wide">
+        <div className="grid grid-cols-2 lg:grid-cols-4">
+          {statsData.map((stat, index) => (
+            <motion.div
+              key={index}
+              className="relative px-6 md:px-10 py-8 md:py-10"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ 
+                duration: 0.8, 
+                delay: index * 0.15,
+                ease: [0.22, 1, 0.36, 1]
+              }}
+            >
+              {/* Vertical divider */}
+              {index > 0 && (
+                <motion.div
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-24 bg-background/10"
+                  initial={{ scaleY: 0 }}
+                  animate={isInView ? { scaleY: 1 } : {}}
+                  transition={{ 
+                    duration: 0.8, 
+                    delay: 0.3 + index * 0.1,
+                    ease: [0.22, 1, 0.36, 1]
+                  }}
+                />
+              )}
+
+              {/* Number */}
               <motion.div
-                key={stat.id}
-                variants={statVariants}
-                whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                className="bg-card rounded-3xl p-6 md:p-8 border border-border"
+                className="mb-6"
+                initial={{ opacity: 0 }}
+                animate={isInView ? { opacity: 1 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 + index * 0.15 }}
               >
-                <h3 className="font-syne font-bold text-4xl md:text-5xl text-primary mb-2">
-                  {stat.value}
-                </h3>
-                <p className="font-semibold text-foreground mb-1">
-                  {stat.label}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {stat.description}
+                <span className="font-syne text-5xl md:text-6xl lg:text-7xl font-bold text-background tracking-tight">
+                  <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                </span>
+              </motion.div>
+
+              {/* Label */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: 0.4 + index * 0.15,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+              >
+                <p className="text-sm md:text-base text-background/70 leading-relaxed">
+                  {stat.line1}
+                  <br />
+                  {stat.line2}
                 </p>
               </motion.div>
-            ))}
-
-            <motion.div variants={statVariants} className="col-span-2 pt-4">
-              <PillButton href="#about" variant="ghost" showArrow>
-                More about us
-              </PillButton>
             </motion.div>
-          </div>
-
-          {/* Image */}
-          <motion.div
-            variants={imageVariants}
-            className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80"
-              alt="Professional team member representing Ahmed Inc.'s expertise"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />
-          </motion.div>
+          ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
