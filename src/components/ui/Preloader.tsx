@@ -49,21 +49,13 @@ export function Preloader({ onComplete }: PreloaderProps) {
             transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center"
           >
-            <motion.h1
+          <motion.h1
               className="font-syne font-bold text-4xl md:text-6xl text-background mb-2"
               initial={{ y: 20 }}
               animate={{ y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               Ahmed Inc.
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-background/60"
-              >
-                ®
-              </motion.span>
             </motion.h1>
             
             <motion.p
