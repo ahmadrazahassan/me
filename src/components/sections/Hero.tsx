@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Plus } from "lucide-react";
 
 const services = [
@@ -10,12 +10,31 @@ const services = [
 ];
 
 export function Hero() {
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax transforms
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const studioY = useTransform(scrollYProgress, [0, 1], ["0%", "80%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+
   return (
-    <section className="relative min-h-screen flex flex-col bg-foreground overflow-hidden">
-      {/* Background smoke/blur effect */}
-      <div className="absolute inset-0">
+    <section
+      ref={containerRef}
+      className="relative min-h-screen flex flex-col bg-foreground overflow-hidden"
+    >
+      {/* Background smoke/blur effect with parallax */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ y: backgroundY }}
+      >
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
+          className="absolute inset-0 bg-cover bg-center opacity-40 scale-110"
           style={{
             backgroundImage:
               "url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&q=80')",
@@ -23,12 +42,15 @@ export function Hero() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/80 to-foreground" />
-      </div>
+      </motion.div>
 
       {/* Main Content */}
       <div className="container-wide relative z-10 flex-1 flex flex-col pt-24 md:pt-32">
-        {/* Large Typography */}
-        <div className="flex-1 flex flex-col justify-center">
+        {/* Large Typography with parallax */}
+        <motion.div
+          className="flex-1 flex flex-col justify-center"
+          style={{ y: textY, opacity, scale }}
+        >
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -45,11 +67,12 @@ export function Hero() {
               </span>
             </h1>
 
-            {/* Studio text */}
+            {/* Studio text with separate parallax */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
+              style={{ y: studioY }}
               className="font-syne font-bold text-background text-4xl md:text-6xl lg:text-7xl mt-4 md:mt-6 text-center md:text-left md:ml-[30%]"
             >
               Studio
@@ -72,14 +95,17 @@ export function Hero() {
               </span>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Decorative Plus Signs */}
-        <div className="absolute bottom-32 left-0 right-0 hidden md:flex justify-between px-8">
+        <motion.div
+          className="absolute bottom-32 left-0 right-0 hidden md:flex justify-between px-8"
+          style={{ opacity }}
+        >
           {[...Array(4)].map((_, i) => (
             <Plus key={i} className="h-4 w-4 text-background/30" />
           ))}
-        </div>
+        </motion.div>
 
         {/* Bottom Section */}
         <motion.div
