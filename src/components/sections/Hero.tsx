@@ -48,43 +48,49 @@ export function Hero() {
       </div>
 
       {/* Main Content */}
-      <div className="container-wide relative z-10 flex-1 flex flex-col pt-16 md:pt-24 lg:pt-32">
-        {/* Large Typography with parallax */}
-        <motion.div
-          className="flex-1 flex flex-col justify-center -mt-8 md:-mt-16"
-          style={{ y: textY, opacity, scale }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
-          >
-            {/* Main brand name with primary color */}
-            <h1 className="font-syne font-bold text-primary leading-[0.9] tracking-[-0.04em]">
-              <span className="text-[15vw] md:text-[16vw] lg:text-[18vw] block">
-                Ahmed
-              </span>
-            </h1>
-          </motion.div>
-
-          {/* Services list - fixed positioning */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-3 text-right"
-          >
-            {services.map((service, index) => (
-              <span
-                key={index}
-                className="text-background/50 text-sm whitespace-nowrap"
+      <div className="container-wide relative z-10 flex-1 flex flex-col">
+        {/* Hero content area */}
+        <div className="flex-1 flex items-center">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left - Main Typography */}
+            <motion.div
+              className="lg:col-span-8"
+              style={{ y: textY, opacity, scale }}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
               >
-                {service}
-              </span>
-            ))}
-          </motion.div>
-        </motion.div>
+                <h1 className="font-syne font-bold text-primary leading-[0.9] tracking-[-0.04em]">
+                  <span className="text-[18vw] md:text-[16vw] lg:text-[14vw] xl:text-[12vw] block">
+                    Ahmed
+                  </span>
+                </h1>
+              </motion.div>
+            </motion.div>
+
+            {/* Right - Services list */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="lg:col-span-4 hidden lg:flex flex-col gap-2 text-right self-end pb-4"
+            >
+              {services.map((service, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1 }}
+                  className="text-background/60 text-sm font-medium"
+                >
+                  {service}
+                </motion.span>
+              ))}
+            </motion.div>
+          </div>
+        </div>
 
         {/* Decorative Plus Signs */}
         <motion.div
