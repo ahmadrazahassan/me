@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { X } from "lucide-react";
 import { navigationItems } from "@/data/navigation";
 
@@ -49,13 +49,24 @@ function NavLink({ href, children, superscript }: { href: string; children: Reac
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    // Hide header after scrolling past hero section (approximately viewport height)
+    const heroHeight = window.innerHeight;
+    setIsVisible(latest < heroHeight * 0.8);
+  });
 
   return (
     <>
       <motion.header
         initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        animate={{ 
+          y: isVisible ? 0 : -100, 
+          opacity: isVisible ? 1 : 0 
+        }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         className="fixed top-0 left-0 right-0 z-50 bg-background"
       >
         <nav
