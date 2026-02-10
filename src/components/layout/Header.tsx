@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { X } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { navigationItems } from "@/data/navigation";
 
 // Animated nav link component
@@ -43,6 +43,127 @@ function NavLink({ href, children, superscript }: { href: string; children: Reac
         }}
         style={{ width: "100%" }}
       />
+    </motion.a>
+  );
+}
+
+// Simple Hamburger Button - just lines, hover turns red
+function HamburgerButton({ isOpen, onClick, inverted = false }: { isOpen: boolean; onClick: () => void; inverted?: boolean }) {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const defaultColor = inverted ? "#ffffff" : "hsl(0, 0%, 4%)";
+  const hoverColor = "hsl(4, 84%, 49%)";
+
+  return (
+    <motion.button
+      className="relative p-2 group"
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      aria-label={isOpen ? "Close menu" : "Open menu"}
+      whileTap={{ scale: 0.95 }}
+    >
+      <div className="w-7 h-4 flex flex-col justify-between">
+        {/* Top line */}
+        <motion.span
+          className="block h-[2px] rounded-full origin-center"
+          animate={{
+            backgroundColor: isHovered ? hoverColor : defaultColor,
+            rotate: isOpen ? 45 : 0,
+            y: isOpen ? 7 : 0,
+          }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        />
+        
+        {/* Bottom line */}
+        <motion.span
+          className="block h-[2px] rounded-full origin-center"
+          animate={{
+            backgroundColor: isHovered ? hoverColor : defaultColor,
+            rotate: isOpen ? -45 : 0,
+            y: isOpen ? -7 : 0,
+            width: isOpen ? "100%" : "70%",
+            marginLeft: isOpen ? "0%" : "30%",
+          }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        />
+      </div>
+    </motion.button>
+  );
+}
+
+// Menu nav link with same animation as header
+function MenuNavLink({ href, children, index, onClick }: { href: string; children: React.ReactNode; index: number; onClick: () => void }) {
+  return (
+    <motion.a
+      href={href}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ 
+        delay: 0.1 + index * 0.08, 
+        duration: 0.5, 
+        ease: [0.6, 0.01, 0, 0.9] 
+      }}
+      onClick={onClick}
+      className="group relative flex items-center gap-4"
+      whileHover="hover"
+    >
+      {/* Index number */}
+      <motion.span 
+        className="text-xs text-background/40 font-mono"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 + index * 0.08 }}
+      >
+        0{index + 1}
+      </motion.span>
+
+      {/* Dot indicator */}
+      <motion.span
+        className="w-2 h-2 rounded-full border border-background/30"
+        variants={{
+          hover: { 
+            backgroundColor: "hsl(4, 84%, 49%)",
+            borderColor: "hsl(4, 84%, 49%)",
+            scale: 1.2
+          }
+        }}
+        transition={{ duration: 0.3 }}
+      />
+
+      {/* Link text with reveal animation */}
+      <span className="relative inline-block overflow-hidden">
+        <motion.span
+          className="inline-block text-5xl md:text-6xl lg:text-7xl font-syne font-bold text-background"
+          variants={{
+            hover: { y: "-100%", transition: { duration: 0.3, ease: [0.6, 0.01, 0, 0.9] } }
+          }}
+        >
+          {children}
+        </motion.span>
+        <motion.span
+          className="absolute left-0 top-full inline-block text-5xl md:text-6xl lg:text-7xl font-syne font-bold text-background"
+          variants={{
+            hover: { y: "-100%", transition: { duration: 0.3, ease: [0.6, 0.01, 0, 0.9] } }
+          }}
+        >
+          {children}
+        </motion.span>
+      </span>
+
+      {/* Arrow icon */}
+      <motion.span
+        className="text-background/50"
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.4 + index * 0.08 }}
+        variants={{
+          hover: { x: 5, color: "hsl(4, 84%, 49%)", transition: { duration: 0.3 } }
+        }}
+      >
+        <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" />
+      </motion.span>
     </motion.a>
   );
 }
@@ -99,88 +220,82 @@ export function Header() {
           </div>
 
           {/* Hamburger Menu */}
-          <motion.button
-            className="p-2 text-foreground relative group"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-            whileHover="hover"
-            whileTap={{ scale: 0.95 }}
-          >
-            <div className="w-7 flex flex-col gap-1.5">
-              <motion.span 
-                className="block h-0.5 bg-foreground w-full origin-right"
-                variants={{
-                  hover: { scaleX: 0.8, transition: { duration: 0.2 } }
-                }}
-              />
-              <motion.span 
-                className="block h-0.5 bg-foreground w-3/4 ml-auto"
-                variants={{
-                  hover: { scaleX: 1.2, transition: { duration: 0.2 } }
-                }}
-              />
-            </div>
-          </motion.button>
+          <HamburgerButton 
+            isOpen={isMobileMenuOpen} 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+          />
         </nav>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Full Screen Menu Overlay - covers everything */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-foreground"
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-[60] bg-foreground"
           >
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute inset-0 flex flex-col p-6"
-            >
-              <div className="flex items-center justify-between mb-12">
-                <span className="font-syne font-bold text-base text-background">
-                  Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
-                </span>
-                <motion.button
+            {/* Menu Header - logo left, close right */}
+            <div className="container-wide flex items-center justify-between h-14 md:h-16">
+              <motion.a 
+                href="#"
+                className="font-syne font-bold text-base text-background"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Ahmed Inc.<sup className="text-[10px] text-primary">®</sup>
+              </motion.a>
+              
+              {/* Close button */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <HamburgerButton 
+                  isOpen={true} 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  aria-label="Close menu"
-                  className="p-2 text-background"
-                  whileHover={{ rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X className="h-6 w-6" />
-                </motion.button>
-              </div>
+                  inverted={true}
+                />
+              </motion.div>
+            </div>
 
-              <nav className="flex-1 flex flex-col justify-center space-y-6">
+            {/* Navigation Links */}
+            <nav className="container-wide flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
+              <div className="flex flex-col items-center gap-4 md:gap-6">
                 {navigationItems.map((item, index) => (
-                  <motion.a
+                  <MenuNavLink
                     key={item.id}
                     href={item.href}
-                    initial={{ opacity: 0, x: 40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ delay: index * 0.08, duration: 0.4, ease: [0.6, 0.01, 0, 0.9] }}
+                    index={index}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-4xl font-syne font-bold text-background hover:text-background/70 transition-colors relative group overflow-hidden"
-                    whileHover={{ x: 10 }}
                   >
-                    <span className="relative inline-block">
-                      {item.label}
-                      <motion.span
-                        className="absolute bottom-0 left-0 h-[2px] bg-background/50 origin-left"
-                        initial={{ scaleX: 0 }}
-                        whileHover={{ scaleX: 1 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ width: "100%" }}
-                      />
-                    </span>
-                  </motion.a>
+                    {item.label}
+                  </MenuNavLink>
                 ))}
-              </nav>
+              </div>
+            </nav>
+
+            {/* Footer Info */}
+            <motion.div 
+              className="absolute bottom-8 left-0 right-0 container-wide"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.4 }}
+            >
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-background/50">
+                <a href="mailto:hello@ahmedinc.com" className="hover:text-background transition-colors">
+                  hello@ahmedinc.com
+                </a>
+                <span>Based in Dubai, UAE</span>
+                <a href="#" className="hover:text-background transition-colors">Twitter</a>
+                <a href="#" className="hover:text-background transition-colors">LinkedIn</a>
+                <a href="#" className="hover:text-background transition-colors">Dribbble</a>
+              </div>
             </motion.div>
           </motion.div>
         )}

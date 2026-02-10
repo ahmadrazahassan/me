@@ -17,6 +17,9 @@ export default {
         syne: ["Syne", "sans-serif"],
         inter: ["Inter", "sans-serif"],
         bebas: ["Bebas Neue", "sans-serif"],
+        outfit: ["Outfit", "sans-serif"],
+        grotesk: ["Space Grotesk", "sans-serif"],
+        montserrat: ["Montserrat Alternates", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

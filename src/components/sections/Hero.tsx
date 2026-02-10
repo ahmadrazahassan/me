@@ -141,8 +141,8 @@ export function Hero() {
               {/* Image with hover effect */}
               <div className="relative overflow-hidden rounded-xl">
                 <motion.img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80"
-                  alt="Lauren Thompson - Team Lead"
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80"
+                  alt="Ahmed Raza - Team Lead"
                   className="w-16 h-20 object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
                 />
                 {/* Image overlay on hover */}
@@ -154,7 +154,7 @@ export function Hero() {
                 <p className="text-muted-foreground text-xs font-medium tracking-wide">Team Lead</p>
                 <p className="text-muted-foreground/50 text-[10px] mt-0.5">at Ahmed Inc.<sup className="text-[8px]">®</sup></p>
                 <p className="font-syne font-bold text-foreground text-sm mt-1 truncate">
-                  Lauren Thompson
+                  Ahmed Raza
                 </p>
                 
                 {/* Action buttons */}
@@ -162,7 +162,7 @@ export function Hero() {
                   <MagneticButton
                     as="a"
                     href="#contact"
-                    className="relative overflow-hidden bg-foreground text-background text-xs font-medium px-4 py-2 rounded-full hover:bg-foreground/90 transition-all duration-300 inline-flex items-center gap-1.5 group/btn"
+                    className="relative overflow-hidden bg-primary text-primary-foreground text-xs font-medium px-4 py-2 rounded-full hover:bg-foreground transition-colors duration-300 inline-flex items-center gap-1.5 group/btn"
                     strength={0.3}
                   >
                     <span className="relative z-10">Let's talk</span>
